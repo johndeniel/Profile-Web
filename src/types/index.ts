@@ -42,3 +42,19 @@ export interface SocialLink {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface SkillSet {
+  id: string;
+  uploaderId: string;
+  skill: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SkillSet {
+  id: string;
+  uploaderId: string;
+  skill: string;
+  createdAt: string;
+  updatedAt: string;
+}

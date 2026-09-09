@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { PersonalInformationCard } from '@/components/personal-information';
 import { Contact } from '@/components/contact';
 import { SocialLinks } from '@/components/social-links';
+import { SkillSetList } from '@/components/skill-set';
 import { GitHubProjects } from '@/components/github-projects';
 import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
 import { useGitHubRepos } from '@/hooks/use-github-repos';
-import type { PersonalInformation, SocialLink } from '@/types';
+import type { PersonalInformation, SocialLink, SkillSet } from '@/types';
 
 const mockPersonalInformation: PersonalInformation[] = [
   {
@@ -62,6 +63,44 @@ const mockSocialLinks: SocialLink[] = [
   },
 ];
 
+const mockSkillSet: SkillSet[] = [
+  {
+    id: '1',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    skill: 'JavaScript',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '2',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    skill: 'TypeScript',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '3',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    skill: 'React',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '4',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    skill: 'Java',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '5',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    skill: 'Next.js',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+];
+
 export default function HomePage() {
   const [data] = useState<PersonalInformation[]>(mockPersonalInformation);
   const { repos, loading, error } = useGitHubRepos(
@@ -81,6 +120,7 @@ export default function HomePage() {
         <div className="flex flex-col gap-8">
           <Contact person={data[0]} />
           <SocialLinks links={mockSocialLinks} />
+          <SkillSetList skills={mockSkillSet} />
         </div>
         <div className="flex-1 min-h-75">
           {error && <div className="text-sm text-destructive">{error}</div>}
