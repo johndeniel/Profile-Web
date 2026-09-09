@@ -4,7 +4,9 @@ export function GitHubProjectsSkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Skeleton className="h-6 w-40" />
+        <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
+          GitHub Projects
+        </h3>
         <Skeleton className="h-5 w-14 rounded-full" />
       </div>
       <div className="grid grid-cols-3 gap-4">

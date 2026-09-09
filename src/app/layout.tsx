@@ -3,6 +3,7 @@ import { ThemeSwitch } from '@/components/theme-switch';
 import { Head } from 'nextra/components';
 import { getPageMap } from 'nextra/page-map';
 import localFont from 'next/font/local';
+import type { ReactNode } from 'react';
 import 'nextra-theme-docs/style.css';
 import '../styles/globals.css';
 
@@ -41,7 +42,11 @@ export const metadata = {
   description: 'My profile website',
 };
 
-export default async function RootLayout({ children }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const navbar = (
     <Navbar logo={<b>Profile Web</b>}>
       <ThemeSwitch />

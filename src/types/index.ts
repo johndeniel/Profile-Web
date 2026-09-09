@@ -34,3 +34,12 @@ export interface PaginatedResponse<T> {
   currentPage: number;
   size: number;
 }
+
+export interface SocialLink {
+  id: string;
+  uploaderId: string;
+  platform: string;
+  platformUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}
