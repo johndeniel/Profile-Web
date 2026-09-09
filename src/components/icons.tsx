@@ -36,11 +36,11 @@ export function InstagramIcon({ className }: { className?: string }) {
     >
       <defs>
         <linearGradient id="ig" x1="0" x2="1" y1="1" y2="0">
-          <stop offset="0%" stopColor="#feda75" />
-          <stop offset="25%" stopColor="#fa7e1e" />
-          <stop offset="50%" stopColor="#d62976" />
-          <stop offset="75%" stopColor="#962fbf" />
-          <stop offset="100%" stopColor="#4f5bd5" />
+          <stop offset="0%" stopColor="var(--icon-instagram-1)" />
+          <stop offset="25%" stopColor="var(--icon-instagram-2)" />
+          <stop offset="50%" stopColor="var(--icon-instagram-3)" />
+          <stop offset="75%" stopColor="var(--icon-instagram-4)" />
+          <stop offset="100%" stopColor="var(--icon-instagram-5)" />
         </linearGradient>
       </defs>
       <path
