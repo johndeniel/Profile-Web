@@ -22,7 +22,7 @@ const platformConfig: Record<string, { icon: React.ElementType }> = {
 
 export function SocialLinks({ links }: SocialLinksProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="-mt-4 flex items-center gap-3">
       {links.map((link) => {
         const config = platformConfig[link.platform] || { icon: ExternalLink };
         const Icon = config.icon;
