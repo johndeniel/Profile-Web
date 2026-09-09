@@ -40,18 +40,20 @@ export default async function RootLayout({ children }) {
     >
       <Head />
       <body className="font-geist">
-        <Layout
-          navbar={navbar}
-          footer={
-            <Footer>
-              <ThemeSwitch />
-            </Footer>
-          }
-          pageMap={pageMap}
-          darkMode={true}
-        >
-          {children}
-        </Layout>
+        <div className="mx-auto max-w-screen-2xl">
+          <Layout
+            navbar={navbar}
+            footer={
+              <Footer>
+                <ThemeSwitch />
+              </Footer>
+            }
+            pageMap={pageMap}
+            darkMode={true}
+          >
+            {children}
+          </Layout>
+        </div>
       </body>
     </html>
   );
