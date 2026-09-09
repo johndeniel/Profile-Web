@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import bannerImage from '@/assets/fonts/images/photo-1451187580459-43490279c0fa.jpeg';
+import bannerImage from '@/assets/images/banner.jpeg';
 import type { PersonalInformation } from '@/types';
 
 interface PersonalInformationProps {
