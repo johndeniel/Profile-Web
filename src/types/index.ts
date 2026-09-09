@@ -14,6 +14,19 @@ export interface PersonalInformation {
   updatedAt: string;
 }
 
+export interface GitHubRepo {
+  id: number;
+  name: string;
+  description: string | null;
+  html_url: string;
+  stargazers_count: number;
+  language: string | null;
+  fork: boolean;
+  owner: {
+    login: string;
+  };
+}
+
 export interface PaginatedResponse<T> {
   content: T[];
   totalElements: number;

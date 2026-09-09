@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PersonalInformationCard } from '@/components/personal-information';
 import { Contact } from '@/components/contact';
 import { GitHubProjects } from '@/components/github-projects';
+import { useGitHubRepos } from '@/hooks/use-github-repos';
 import type { PersonalInformation } from '@/types';
 
 const mockPersonalInformation: PersonalInformation[] = [
@@ -28,6 +29,9 @@ const mockPersonalInformation: PersonalInformation[] = [
 
 export default function HomePage() {
   const [data] = useState<PersonalInformation[]>(mockPersonalInformation);
+  const { repos, loading, error } = useGitHubRepos(
+    process.env.NEXT_PUBLIC_GITHUB_USERNAME!
+  );
 
   if (data.length === 0) {
     return null;
@@ -40,7 +44,15 @@ export default function HomePage() {
       ))}
       <div className="mt-8 flex gap-16">
         <Contact person={data[0]} />
-        <GitHubProjects username="johndeniel" />
+        <div>
+          {loading && (
+            <div className="text-sm text-muted-foreground">
+              Loading projects...
+            </div>
+          )}
+          {error && <div className="text-sm text-destructive">{error}</div>}
+          {!loading && !error && <GitHubProjects repos={repos} />}
+        </div>
       </div>
     </main>
   );

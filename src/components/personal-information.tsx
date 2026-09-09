@@ -30,12 +30,10 @@ export function PersonalInformationCard({ person }: PersonalInformationProps) {
           </AvatarFallback>
         </Avatar>
         <div className="ml-36 pt-2 text-left">
-          <h1 className="text-xl font-bold tracking-tight text-foreground">
+          <h1 className="font-heading text-xl font-bold tracking-tight text-foreground">
             {person.firstName} {person.middleName} {person.lastName}
           </h1>
-          <p className="mt-0.5 text-base text-muted-foreground">
-            {person.headline}
-          </p>
+          <p className="text-base text-muted-foreground">{person.headline}</p>
         </div>
       </div>
     </div>

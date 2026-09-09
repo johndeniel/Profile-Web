@@ -7,21 +7,33 @@ import 'nextra-theme-docs/style.css';
 import '../styles/globals.css';
 
 const lora = localFont({
-  src: '../assets/fonts/Lora-Regular.woff2',
-  variable: '--font-cal-sans',
-  weight: '400',
+  src: [
+    {
+      path: '../assets/fonts/Lora-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/Lora-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+    { path: '../assets/fonts/Lora-Bold.ttf', weight: '700', style: 'normal' },
+  ],
+  variable: '--font-heading',
+  display: 'swap',
 });
 
 const geist = localFont({
   src: '../assets/fonts/Geist-Regular.woff2',
-  variable: '--font-geist',
-  weight: '400',
+  variable: '--font-sans',
+  display: 'swap',
 });
 
 const geistMono = localFont({
   src: '../assets/fonts/GeistMono-Regular.woff2',
-  variable: '--font-geist-mono',
-  weight: '400',
+  variable: '--font-mono',
+  display: 'swap',
 });
 
 export const metadata = {
@@ -44,7 +56,7 @@ export default async function RootLayout({ children }) {
       className={`${lora.variable} ${geist.variable} ${geistMono.variable}`}
     >
       <Head />
-      <body className="font-geist">
+      <body className="font-sans">
         <div className="mx-auto max-w-screen-2xl">
           <Layout navbar={navbar} pageMap={pageMap} darkMode={true}>
             {children}
