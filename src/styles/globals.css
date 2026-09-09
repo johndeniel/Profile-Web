@@ -5,8 +5,15 @@
 @custom-variant dark (&:is(.dark *));
 
 nav.nextra-nav {
-  background: transparent !important;
-  border-bottom: none !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark nav.nextra-nav {
+  background: rgba(17, 17, 17, 0.8) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 @theme inline {

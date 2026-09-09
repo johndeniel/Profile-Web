@@ -1,24 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { PersonalInformationCard } from '@/components/personal-information';
+import { Contact } from '@/components/contact';
+import { GitHubProjects } from '@/components/github-projects';
 import type { PersonalInformation } from '@/types';
 
 const mockPersonalInformation: PersonalInformation[] = [
   {
     id: '1',
-    firstName: 'John',
-    middleName: 'Deniel',
-    lastName: 'Doe',
-    headline: 'Full Stack Developer',
-    blobUrl: 'https://github.com/shadcn.png',
+    firstName: 'John Deniel',
+    middleName: 'Santos',
+    lastName: 'Dela Peña',
+    headline: 'Junior Java Developer',
+    blobUrl:
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/johndeniel-e84c3263-ofh07DeAj1vs5QLeGaOLL6Gf9XMbI0.png',
     blobId: 'avatar-1',
-    emailAddress: 'john.doe@example.com',
-    phoneNumber: '+1 (555) 123-4567',
-    location: 'San Francisco, CA',
+    bannerUrl:
+      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=400&fit=crop',
+    emailAddress: 'johndenieldelapena97@gmail.com',
+    phoneNumber: '09213020765',
+    location: 'San Nicolas Bulakan Bulacan, Philippines',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-03-20T14:45:00Z',
   },
@@ -34,45 +36,12 @@ export default function HomePage() {
   return (
     <main className="py-8">
       {data.map((person) => (
-        <Card key={person.id}>
-          <CardHeader>
-            <div className="flex items-center gap-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage
-                  src={person.blobUrl}
-                  alt={`${person.firstName} ${person.lastName}`}
-                />
-                <AvatarFallback>
-                  {person.firstName[0]}
-                  {person.lastName[0]}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle className="text-2xl">
-                  {person.firstName} {person.middleName} {person.lastName}
-                </CardTitle>
-                <Badge variant="secondary">{person.headline}</Badge>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                <span>{person.emailAddress}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <span>{person.phoneNumber}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                <span>{person.location}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <PersonalInformationCard key={person.id} person={person} />
       ))}
+      <div className="mt-8 flex gap-16">
+        <Contact person={data[0]} />
+        <GitHubProjects username="johndeniel" />
+      </div>
     </main>
   );
 }

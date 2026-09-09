@@ -1,4 +1,5 @@
-import { Footer, Layout, Navbar, ThemeSwitch } from 'nextra-theme-docs';
+import { Layout, Navbar } from 'nextra-theme-docs';
+import { ThemeSwitch } from '@/components/theme-switch';
 import { Head } from 'nextra/components';
 import { getPageMap } from 'nextra/page-map';
 import localFont from 'next/font/local';
@@ -29,7 +30,11 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const navbar = <Navbar logo={<b>Profile Web</b>} />;
+  const navbar = (
+    <Navbar logo={<b>Profile Web</b>}>
+      <ThemeSwitch />
+    </Navbar>
+  );
   const pageMap = await getPageMap();
   return (
     <html
@@ -41,16 +46,7 @@ export default async function RootLayout({ children }) {
       <Head />
       <body className="font-geist">
         <div className="mx-auto max-w-screen-2xl">
-          <Layout
-            navbar={navbar}
-            footer={
-              <Footer>
-                <ThemeSwitch />
-              </Footer>
-            }
-            pageMap={pageMap}
-            darkMode={true}
-          >
+          <Layout navbar={navbar} pageMap={pageMap} darkMode={true}>
             {children}
           </Layout>
         </div>

@@ -1,0 +1,43 @@
+'use client';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import type { PersonalInformation } from '@/types';
+
+interface PersonalInformationProps {
+  person: PersonalInformation;
+}
+
+export function PersonalInformationCard({ person }: PersonalInformationProps) {
+  return (
+    <div className="overflow-hidden rounded-lg bg-card font-sans">
+      <div
+        className="h-40 w-full bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: person.bannerUrl
+            ? `url(${person.bannerUrl})`
+            : undefined,
+        }}
+      />
+      <div className="relative px-8 pb-8">
+        <Avatar className="absolute -top-16 left-8 h-32 w-32 border-4 border-card">
+          <AvatarImage
+            src={person.blobUrl}
+            alt={`${person.firstName} ${person.lastName}`}
+          />
+          <AvatarFallback className="text-3xl font-medium">
+            {person.firstName[0]}
+            {person.lastName[0]}
+          </AvatarFallback>
+        </Avatar>
+        <div className="ml-36 pt-2 text-left">
+          <h1 className="text-xl font-bold tracking-tight text-foreground">
+            {person.firstName} {person.middleName} {person.lastName}
+          </h1>
+          <p className="mt-0.5 text-base text-muted-foreground">
+            {person.headline}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
