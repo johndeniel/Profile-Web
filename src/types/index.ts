@@ -6,7 +6,6 @@ export interface PersonalInformation {
   headline: string;
   blobUrl: string;
   blobId: string;
-  bannerUrl?: string;
   emailAddress: string;
   phoneNumber: string;
   location: string;

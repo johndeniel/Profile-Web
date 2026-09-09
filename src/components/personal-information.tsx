@@ -1,6 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import bannerImage from '@/assets/fonts/images/photo-1451187580459-43490279c0fa.jpeg';
 import type { PersonalInformation } from '@/types';
 
 interface PersonalInformationProps {
@@ -13,9 +14,7 @@ export function PersonalInformationCard({ person }: PersonalInformationProps) {
       <div
         className="h-40 w-full bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: person.bannerUrl
-            ? `url(${person.bannerUrl})`
-            : undefined,
+          backgroundImage: `url(${bannerImage.src})`,
         }}
       />
       <div className="relative px-8 pb-8">

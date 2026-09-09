@@ -19,8 +19,6 @@ const mockPersonalInformation: PersonalInformation[] = [
     blobUrl:
       'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/johndeniel-e84c3263-ofh07DeAj1vs5QLeGaOLL6Gf9XMbI0.png',
     blobId: 'avatar-1',
-    bannerUrl:
-      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=400&fit=crop',
     emailAddress: 'johndenieldelapena97@gmail.com',
     phoneNumber: '09213020765',
     location: 'San Nicolas Bulakan Bulacan Philippines',
