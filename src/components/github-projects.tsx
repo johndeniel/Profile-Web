@@ -1,11 +1,13 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Star, ExternalLink, GitFork } from 'lucide-react';
 import type { GitHubRepo } from '@/types';
 
 interface GitHubProjectsProps {
   repos: GitHubRepo[];
+  loading?: boolean;
 }
 
 const languageColors: Record<string, string> = {
@@ -28,59 +30,86 @@ const languageColors: Record<string, string> = {
   Markdown: 'bg-gray-400',
 };
 
-export function GitHubProjects({ repos }: GitHubProjectsProps) {
+export function GitHubProjects({ repos, loading }: GitHubProjectsProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
-          GitHub Projects
-        </h3>
-        <Badge variant="secondary" className="text-xs">
-          {repos.length} repos
-        </Badge>
+        {loading ? (
+          <Skeleton className="h-6 w-40" />
+        ) : (
+          <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
+            GitHub Projects
+          </h3>
+        )}
+        {loading ? (
+          <Skeleton className="h-5 w-14 rounded-full" />
+        ) : (
+          <Badge variant="secondary" className="text-xs">
+            {repos.length} repos
+          </Badge>
+        )}
       </div>
       <div className="grid grid-cols-3 gap-4">
-        {repos.map((repo) => (
-          <a
-            key={repo.id}
-            href={repo.html_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative flex flex-col gap-3 rounded-lg border border-border bg-card p-4 transition-all hover:border-muted-foreground/20 hover:shadow-md"
-          >
-            <ExternalLink className="absolute right-3 top-3 h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-foreground group-hover:text-primary">
-                  {repo.name}
-                </span>
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex min-h-35 flex-col gap-3 rounded-lg border border-border bg-card p-4"
+              >
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton className="h-4 w-28" />
+                  <div className="flex flex-col gap-1">
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-3/4" />
+                  </div>
+                </div>
+                <div className="mt-auto flex items-center gap-2 pt-2">
+                  <Skeleton className="h-3 w-3 rounded-full" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
               </div>
-              {repo.description && (
-                <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                  {repo.description}
-                </p>
-              )}
-            </div>
-            <div className="mt-auto flex items-center gap-2 pt-2">
-              {repo.language && (
-                <div className="flex items-center gap-1.5">
-                  <div
-                    className={`h-2.5 w-2.5 rounded-full ${languageColors[repo.language] || 'bg-gray-400'}`}
-                  />
-                  <span className="text-xs text-muted-foreground">
-                    {repo.language}
-                  </span>
+            ))
+          : repos.map((repo) => (
+              <a
+                key={repo.id}
+                href={repo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex flex-col gap-3 rounded-lg border border-border bg-card p-4 transition-all hover:border-muted-foreground/20 hover:shadow-md"
+              >
+                <ExternalLink className="absolute right-3 top-3 h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-foreground group-hover:text-primary">
+                      {repo.name}
+                    </span>
+                  </div>
+                  {repo.description && (
+                    <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                      {repo.description}
+                    </p>
+                  )}
                 </div>
-              )}
-              {repo.stargazers_count > 0 && (
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Star className="h-3.5 w-3.5" />
-                  <span className="text-xs">{repo.stargazers_count}</span>
+                <div className="mt-auto flex items-center gap-2 pt-2">
+                  {repo.language && (
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className={`h-2.5 w-2.5 rounded-full ${languageColors[repo.language] || 'bg-gray-400'}`}
+                      />
+                      <span className="text-xs text-muted-foreground">
+                        {repo.language}
+                      </span>
+                    </div>
+                  )}
+                  {repo.stargazers_count > 0 && (
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <Star className="h-3.5 w-3.5" />
+                      <span className="text-xs">{repo.stargazers_count}</span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </a>
-        ))}
+              </a>
+            ))}
       </div>
     </div>
   );

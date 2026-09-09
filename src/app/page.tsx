@@ -21,7 +21,7 @@ const mockPersonalInformation: PersonalInformation[] = [
       'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=400&fit=crop',
     emailAddress: 'johndenieldelapena97@gmail.com',
     phoneNumber: '09213020765',
-    location: 'San Nicolas Bulakan Bulacan, Philippines',
+    location: 'San Nicolas Bulakan Bulacan Philippines',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-03-20T14:45:00Z',
   },
@@ -44,14 +44,9 @@ export default function HomePage() {
       ))}
       <div className="mt-8 flex gap-16">
         <Contact person={data[0]} />
-        <div>
-          {loading && (
-            <div className="text-sm text-muted-foreground">
-              Loading projects...
-            </div>
-          )}
+        <div className="flex-1 min-h-75">
           {error && <div className="text-sm text-destructive">{error}</div>}
-          {!loading && !error && <GitHubProjects repos={repos} />}
+          {!error && <GitHubProjects repos={repos} loading={loading} />}
         </div>
       </div>
     </main>
