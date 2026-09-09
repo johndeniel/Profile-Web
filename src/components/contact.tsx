@@ -10,7 +10,7 @@ interface ContactProps {
 
 export function Contact({ person }: ContactProps) {
   return (
-    <div className="mt-4 flex flex-col gap-3 text-sm">
+    <div className="mt-2 flex flex-col gap-3 text-sm">
       <Badge variant="outline" className="gap-1.5 py-1">
         <Mail className="h-3.5 w-3.5 text-muted-foreground/70" />
         <span>{person.emailAddress}</span>
