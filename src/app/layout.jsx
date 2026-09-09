@@ -1,11 +1,11 @@
-import { Footer, Layout, Navbar } from 'nextra-theme-docs';
+import { Footer, Layout, Navbar, ThemeSwitch } from 'nextra-theme-docs';
 import { Head } from 'nextra/components';
 import { getPageMap } from 'nextra/page-map';
 import localFont from 'next/font/local';
 import 'nextra-theme-docs/style.css';
 import '../styles/globals.css';
 
-const calSans = localFont({
+const lora = localFont({
   src: '../assets/fonts/Lora-Regular.woff2',
   variable: '--font-cal-sans',
   weight: '400',
@@ -36,16 +36,19 @@ export default async function RootLayout({ children }) {
       lang="en"
       dir="ltr"
       suppressHydrationWarning
-      className={`${calSans.variable} ${geist.variable} ${geistMono.variable}`}
+      className={`${lora.variable} ${geist.variable} ${geistMono.variable}`}
     >
       <Head />
       <body className="font-geist">
         <Layout
           navbar={navbar}
           footer={
-            <Footer>MIT {new Date().getFullYear()} © Profile Web.</Footer>
+            <Footer>
+              <ThemeSwitch />
+            </Footer>
           }
           pageMap={pageMap}
+          darkMode={true}
         >
           {children}
         </Layout>

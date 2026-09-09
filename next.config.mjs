@@ -1,8 +1,6 @@
 import nextra from 'nextra';
 
-const withNextra = nextra({
-  contentDirBasePath: '/docs',
-});
+const withNextra = nextra({});
 
 export default withNextra({
   reactStrictMode: true,
