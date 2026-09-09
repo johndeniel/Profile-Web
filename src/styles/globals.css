@@ -93,6 +93,9 @@ nav.nextra-nav {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --icon-github: #333333;
+  --icon-linkedin: #0a66c2;
+  --icon-leetcode: #ffa116;
 }
 
 .dark {
@@ -127,6 +130,9 @@ nav.nextra-nav {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --icon-github: #ffffff;
+  --icon-linkedin: #0a66c2;
+  --icon-leetcode: #ffa116;
 }
 
 @layer base {
