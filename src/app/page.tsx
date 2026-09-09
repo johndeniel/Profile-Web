@@ -117,7 +117,7 @@ export default function HomePage() {
         <PersonalInformationCard key={person.id} person={person} />
       ))}
       <div className="mt-8 flex gap-16">
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4">
           <Contact person={data[0]} />
           <SocialLinks links={mockSocialLinks} />
           <SkillSetList skills={mockSkillSet} />
