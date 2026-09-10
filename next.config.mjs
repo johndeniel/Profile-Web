@@ -10,6 +10,10 @@ export default withNextra({
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'design-assets.adobeprojectm.com',
+      },
     ],
   },
 });

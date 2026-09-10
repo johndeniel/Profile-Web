@@ -132,7 +132,8 @@ const mockCurriculumVitae: CurriculumVitae[] = [
   {
     id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    blobUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800',
+    blobUrl:
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     issued: '2026-09-10T00:33:08.155Z',
     createdAt: '2026-09-10T00:33:08.156Z',
@@ -142,7 +143,7 @@ const mockCurriculumVitae: CurriculumVitae[] = [
     id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
     blobUrl:
-      'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800',
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     issued: '2025-06-15T00:33:08.155Z',
     createdAt: '2025-06-15T00:33:08.156Z',
@@ -152,7 +153,7 @@ const mockCurriculumVitae: CurriculumVitae[] = [
     id: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
     blobUrl:
-      'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800',
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
     issued: '2025-01-20T00:33:08.155Z',
     createdAt: '2025-01-20T00:33:08.156Z',
@@ -162,7 +163,7 @@ const mockCurriculumVitae: CurriculumVitae[] = [
     id: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
     blobUrl:
-      'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800',
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
     issued: '2024-09-05T00:33:08.155Z',
     createdAt: '2024-09-05T00:33:08.156Z',
@@ -171,7 +172,8 @@ const mockCurriculumVitae: CurriculumVitae[] = [
   {
     id: 'd4e5f6a7-b8c9-0123-defa-234567890123',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    blobUrl: 'https://images.unsplash.com/photo-1542626991-cbc4e32524cc?w=800',
+    blobUrl:
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: 'd4e5f6a7-b8c9-0123-defa-234567890123',
     issued: '2024-03-12T00:33:08.155Z',
     createdAt: '2024-03-12T00:33:08.156Z',
@@ -181,7 +183,7 @@ const mockCurriculumVitae: CurriculumVitae[] = [
     id: 'e5f6a7b8-c9d0-1234-efab-345678901234',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
     blobUrl:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: 'e5f6a7b8-c9d0-1234-efab-345678901234',
     issued: '2023-11-18T00:33:08.155Z',
     createdAt: '2023-11-18T00:33:08.156Z',
@@ -191,7 +193,7 @@ const mockCurriculumVitae: CurriculumVitae[] = [
     id: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
     blobUrl:
-      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800',
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
     issued: '2023-07-22T00:33:08.155Z',
     createdAt: '2023-07-22T00:33:08.156Z',
@@ -201,7 +203,7 @@ const mockCurriculumVitae: CurriculumVitae[] = [
     id: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
     blobUrl:
-      'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800',
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
     issued: '2023-02-10T00:33:08.155Z',
     createdAt: '2023-02-10T00:33:08.156Z',
@@ -211,7 +213,7 @@ const mockCurriculumVitae: CurriculumVitae[] = [
     id: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
     blobUrl:
-      'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800',
+      'https://design-assets.adobeprojectm.com/content/download/express/restricted/urn:aaid:sc:VA6C2:8a34c4fa-fbd5-5115-95cc-8da82e4f74e9/component?assetType=TEMPLATE&etag=3fafe489cf614ddab1e8336fccaf398d&revision=f1f7b927-501a-4a2b-8e33-b13e7b17f6db&component_id=9dec286d-28d0-415c-8c3c-2b5c7163d880',
     blobId: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
     issued: '2022-08-05T00:33:08.155Z',
     createdAt: '2022-08-05T00:33:08.156Z',
