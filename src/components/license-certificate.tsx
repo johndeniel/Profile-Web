@@ -154,9 +154,9 @@ export function LicenseCertificateList({
               {/* Top Bar */}
               <div className="flex items-center justify-end border-b border-border/60 px-6 py-4">
                 <div className="flex items-center gap-2">
-                  {selectedCert.credentialUrl && (
+                  {previewCert?.credentialUrl && (
                     <a
-                      href={selectedCert.credentialUrl}
+                      href={previewCert.credentialUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -184,7 +184,7 @@ export function LicenseCertificateList({
                 <div className="hidden sm:flex w-64 flex-col border-r border-border/60 bg-muted/20">
                   <div className="px-4 py-3 border-b border-border/60">
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Documents ({1 + getSubCerts(selectedCert).length})
+                      Certificates ({1 + getSubCerts(selectedCert).length})
                     </p>
                   </div>
                   <div className="flex-1 overflow-y-auto p-2 space-y-1">
