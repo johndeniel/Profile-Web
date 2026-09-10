@@ -67,35 +67,56 @@ const mockSkillSet: SkillSet[] = [
   {
     id: '1',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'JavaScript',
+    skill: 'Java',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '2',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'TypeScript',
+    skill: 'Spring Boot',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '3',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'React',
+    skill: 'SQL',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '4',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Java',
+    skill: 'Maven',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '5',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Next.js',
+    skill: 'REST API',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '6',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    skill: 'Git',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '7',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    skill: 'GitHub',
+    createdAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '8',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    skill: 'Docker',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
@@ -117,7 +138,7 @@ export default function HomePage() {
         <PersonalInformationCard key={person.id} person={person} />
       ))}
       <div className="mt-8 flex gap-16">
-        <div className="flex flex-col gap-4">
+        <div className="mt-4 flex max-w-xs flex-col gap-4">
           <Contact person={data[0]} />
           <SocialLinks links={mockSocialLinks} />
           <SkillSetList skills={mockSkillSet} />
