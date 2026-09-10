@@ -10,7 +10,7 @@ interface HeadlineProps {
 
 export function Headline({ person }: HeadlineProps) {
   return (
-    <div className="flex flex-col gap-4 pt-8">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
           Headline
