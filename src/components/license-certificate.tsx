@@ -3,14 +3,8 @@
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+import { ExternalLink, FileText } from 'lucide-react';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import type { LicenseCertificate } from '@/types';
 
 interface LicenseCertificateListProps {
@@ -25,6 +19,9 @@ export function LicenseCertificateList({
   certificates,
 }: LicenseCertificateListProps) {
   const [selectedCert, setSelectedCert] = useState<LicenseCertificate | null>(
+    null
+  );
+  const [previewCert, setPreviewCert] = useState<LicenseCertificate | null>(
     null
   );
 
@@ -52,6 +49,11 @@ export function LicenseCertificateList({
     );
   };
 
+  const handleOpenDialog = (cert: LicenseCertificate) => {
+    setSelectedCert(cert);
+    setPreviewCert(cert);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       {/* Header */}
@@ -69,7 +71,7 @@ export function LicenseCertificateList({
             <div
               key={cert.id}
               className="shrink-0 w-64 cursor-pointer rounded-lg border border-border bg-card p-4 transition-all hover:border-muted-foreground/20 hover:shadow-md"
-              onClick={() => setSelectedCert(cert)}
+              onClick={() => handleOpenDialog(cert)}
             >
               {cert.blobUrl && (
                 <div className="mb-3 overflow-hidden rounded-md">
@@ -133,132 +135,173 @@ export function LicenseCertificateList({
         })}
       </div>
 
-      {/* Certificate Detail Dialog */}
+      {/* PDF Viewer Style Dialog */}
       <Dialog
         open={selectedCert !== null}
         onOpenChange={(open) => {
-          if (!open) setSelectedCert(null);
+          if (!open) {
+            setSelectedCert(null);
+            setPreviewCert(null);
+          }
         }}
       >
-        <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent
+          className="gap-0 p-0 sm:max-w-5xl sm:h-[85vh] overflow-hidden rounded-lg border border-border shadow-xl"
+          showCloseButton={false}
+        >
+          <DialogTitle className="sr-only">Certificate Viewer</DialogTitle>
           {selectedCert && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{selectedCert.title}</DialogTitle>
-                <DialogDescription>{selectedCert.issuer}</DialogDescription>
-              </DialogHeader>
-
-              {/* Main Certificate */}
-              <div className="flex flex-col gap-4">
-                {selectedCert.blobUrl && (
-                  <div className="overflow-hidden rounded-md">
-                    <Image
-                      src={selectedCert.blobUrl}
-                      alt={selectedCert.title}
-                      width={600}
-                      height={400}
-                      sizes="(max-width: 768px) 100vw, 600px"
-                      className="w-full object-contain"
-                    />
-                  </div>
-                )}
-
-                {selectedCert.description && (
-                  <p className="text-sm text-muted-foreground">
-                    {selectedCert.description}
-                  </p>
-                )}
-
-                <div className="flex flex-wrap items-center gap-4 text-sm">
-                  {selectedCert.credentialId && (
-                    <span className="text-muted-foreground">
-                      ID: {selectedCert.credentialId}
-                    </span>
-                  )}
-                  <span className="text-muted-foreground">
-                    Issued: {formatYear(selectedCert.issued)}
+            <div className="flex h-full">
+              {/* Left Panel - Certificate List */}
+              <div className="flex w-72 flex-col border-r border-border bg-muted/20">
+                <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-4 py-3">
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-foreground">
+                    Documents
                   </span>
+                  <Badge variant="secondary" className="ml-auto text-[10px]">
+                    {getSubCerts(selectedCert).length + 1}
+                  </Badge>
                 </div>
-
-                {selectedCert.credentialUrl && (
-                  <a
-                    href={selectedCert.credentialUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 hover:underline"
+                <div className="flex-1 overflow-y-auto">
+                  {/* Main Cert */}
+                  <button
+                    type="button"
+                    className={`flex w-full items-start gap-3 border-b border-border p-3 text-left transition-colors hover:bg-muted ${
+                      previewCert?.id === selectedCert.id ? 'bg-muted' : ''
+                    }`}
+                    onClick={() => setPreviewCert(selectedCert)}
                   >
-                    Verify Credential
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-              </div>
+                    {selectedCert.blobUrl ? (
+                      <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-border">
+                        <Image
+                          src={selectedCert.blobUrl}
+                          alt={selectedCert.title}
+                          width={64}
+                          height={48}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-12 w-16 shrink-0 items-center justify-center rounded border border-border bg-muted">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 pt-0.5">
+                      <p className="text-xs font-medium leading-tight text-foreground">
+                        {selectedCert.title}
+                      </p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        {selectedCert.issuer}
+                      </p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        {formatYear(selectedCert.issued)}
+                      </p>
+                    </div>
+                  </button>
 
-              {/* Related Sub Certificates */}
-              {getSubCerts(selectedCert).length > 0 && (
-                <div className="border-t border-border pt-4">
-                  <h4 className="mb-3 text-sm font-semibold text-foreground">
-                    Related Credentials
-                  </h4>
-                  <div className="flex flex-col gap-4">
-                    {getSubCerts(selectedCert).map((subCert) => (
-                      <div
-                        key={subCert.id}
-                        className="rounded-md border border-border p-4"
-                      >
-                        {subCert.blobUrl && (
-                          <div className="mb-3 overflow-hidden rounded-md">
-                            <Image
-                              src={subCert.blobUrl}
-                              alt={subCert.title}
-                              width={400}
-                              height={250}
-                              sizes="(max-width: 768px) 100vw, 400px"
-                              className="w-full object-contain"
-                            />
-                          </div>
-                        )}
-
-                        <h5 className="text-sm font-medium text-foreground">
+                  {/* Sub Certs */}
+                  {getSubCerts(selectedCert).map((subCert) => (
+                    <button
+                      key={subCert.id}
+                      type="button"
+                      className={`flex w-full items-start gap-3 border-b border-border p-3 text-left transition-colors hover:bg-muted ${
+                        previewCert?.id === subCert.id ? 'bg-muted' : ''
+                      }`}
+                      onClick={() => setPreviewCert(subCert)}
+                    >
+                      {subCert.blobUrl ? (
+                        <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-border">
+                          <Image
+                            src={subCert.blobUrl}
+                            alt={subCert.title}
+                            width={64}
+                            height={48}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex h-12 w-16 shrink-0 items-center justify-center rounded border border-border bg-muted">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0 pt-0.5">
+                        <p className="text-xs font-medium leading-tight text-foreground">
                           {subCert.title}
-                        </h5>
-                        <p className="text-xs text-muted-foreground">
+                        </p>
+                        <p className="mt-0.5 text-[10px] text-muted-foreground">
                           {subCert.issuer}
                         </p>
-
-                        {subCert.description && (
-                          <p className="mt-2 text-xs text-muted-foreground">
-                            {subCert.description}
-                          </p>
-                        )}
-
-                        <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
-                          {subCert.credentialId && (
-                            <span className="text-muted-foreground">
-                              ID: {subCert.credentialId}
-                            </span>
-                          )}
-                          <span className="text-muted-foreground">
-                            {formatYear(subCert.issued)}
-                          </span>
-                        </div>
-
-                        {subCert.credentialUrl && (
-                          <a
-                            href={subCert.credentialUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-2 inline-flex items-center gap-1 text-xs text-blue-500 hover:text-blue-600 hover:underline"
-                          >
-                            Verify
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
+                        <p className="mt-0.5 text-[10px] text-muted-foreground">
+                          {formatYear(subCert.issued)}
+                        </p>
                       </div>
-                    ))}
-                  </div>
+                    </button>
+                  ))}
                 </div>
-              )}
-            </>
+              </div>
+
+              {/* Right Panel - Preview */}
+              <div className="flex flex-1 flex-col bg-background">
+                {previewCert && (
+                  <>
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+                      <p className="truncate text-sm font-medium text-foreground">
+                        {previewCert.title}
+                      </p>
+                      {previewCert.credentialUrl && (
+                        <a
+                          href={previewCert.credentialUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-4 inline-flex shrink-0 items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs text-foreground transition-colors hover:bg-muted"
+                        >
+                          Verify
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+
+                    {/* Description */}
+                    {previewCert.description && (
+                      <div className="border-b border-border px-4 py-2.5">
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                          {previewCert.description}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Image Preview */}
+                    <div className="flex-1 overflow-auto bg-muted/10 p-6">
+                      {previewCert.blobUrl ? (
+                        <div className="mx-auto flex h-full max-w-3xl items-center justify-center">
+                          <Image
+                            src={previewCert.blobUrl}
+                            alt={previewCert.title}
+                            width={800}
+                            height={618}
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className="h-auto w-full rounded-lg border border-border bg-white object-contain shadow-md"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                            <div className="rounded-full bg-muted p-4">
+                              <FileText className="h-8 w-8" />
+                            </div>
+                            <p className="text-sm font-medium">
+                              No preview available
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>
