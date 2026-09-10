@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PersonalInformationCard } from '@/components/personal-information';
-import { Contact } from '@/components/contact';
+import { Headline } from '@/components/headline';
 import { SocialLinks } from '@/components/social-links';
 import { TechStackList } from '@/components/tech-stack';
 import { GitHubProjects } from '@/components/github-projects';
@@ -25,7 +25,9 @@ const mockPersonalInformation: PersonalInformation[] = [
     firstName: 'John Deniel',
     middleName: 'Santos',
     lastName: 'Dela Peña',
-    headline: 'Junior Java Developer',
+    title: 'Junior Java Developer',
+    headline:
+      'Java Backend Developer | Financial Technology | Spring Boot & REST APIs | Backend Systems & Relational Databases',
     blobUrl:
       'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/johndeniel-e84c3263-ofh07DeAj1vs5QLeGaOLL6Gf9XMbI0.png',
     blobId: 'avatar-1',
@@ -447,8 +449,8 @@ export default function HomePage() {
         <PersonalInformationCard key={person.id} person={person} />
       ))}
       <div className="mt-8 flex gap-16">
-        <div className="mt-4 flex max-w-xs flex-col gap-4">
-          <Contact person={data[0]} />
+        <div className="flex max-w-xs flex-col gap-4">
+          <Headline person={data[0]} />
           <SocialLinks links={mockSocialLinks} />
           <TechStackList techs={mockTechStack} />
         </div>

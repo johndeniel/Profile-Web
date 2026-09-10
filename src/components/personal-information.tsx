@@ -32,7 +32,7 @@ export function PersonalInformationCard({ person }: PersonalInformationProps) {
           <h1 className="font-heading text-xl font-bold tracking-tight text-foreground">
             {person.firstName} {person.middleName} {person.lastName}
           </h1>
-          <p className="text-base text-muted-foreground">{person.headline}</p>
+          <p className="text-base text-muted-foreground">{person.title}</p>
         </div>
       </div>
     </div>

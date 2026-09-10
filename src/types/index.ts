@@ -3,6 +3,7 @@ export interface PersonalInformation {
   firstName: string;
   middleName: string;
   lastName: string;
+  title: string;
   headline: string;
   blobUrl: string;
   blobId: string;

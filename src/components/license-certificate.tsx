@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Award, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import type { LicenseCertificate } from '@/types';
@@ -70,16 +71,16 @@ export function LicenseCertificateList({
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4 pt-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
           Licenses & Certificates
         </h3>
 
-        <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-          {certificates.length} credentials
-        </span>
+        <Badge variant="secondary" className="text-xs">
+          {certificates.length} certificates
+        </Badge>
       </div>
 
       {/* Certificate List */}
@@ -127,8 +128,6 @@ export function LicenseCertificateList({
 
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
-
                   <span className="text-[11px] text-muted-foreground">
                     {formatDate(cert.issued)}
                   </span>
