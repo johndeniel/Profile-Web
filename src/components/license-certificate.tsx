@@ -75,13 +75,13 @@ export function LicenseCertificateList({
       </div>
 
       {/* Certificate List */}
-      <div className="flex flex-row flex-nowrap items-start gap-3 overflow-x-auto scrollbar-none">
+      <div className="flex flex-row flex-nowrap items-start gap-4 overflow-x-auto scrollbar-none pb-2">
         {mainCerts.map((cert) => {
           const subCerts = getSubCerts(cert);
           return (
             <div
               key={cert.id}
-              className="shrink-0 w-64 cursor-pointer rounded-lg border border-border bg-card p-4 transition-all hover:border-muted-foreground/20 hover:shadow-md"
+              className="group shrink-0 w-72 cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-card transition-all duration-300 hover:border-border hover:shadow-lg hover:shadow-black/5"
               onClick={() => {
                 setSelectedCert(cert);
                 setPreviewCert(cert);
@@ -89,48 +89,48 @@ export function LicenseCertificateList({
               }}
             >
               {cert.blobUrl && (
-                <div className="mb-3 overflow-hidden rounded-md">
+                <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-muted/50 to-muted">
                   <Image
                     src={cert.blobUrl}
                     alt={cert.title}
-                    width={300}
-                    height={200}
-                    sizes="224px"
-                    loading="eager"
-                    className="h-36 w-full object-cover transition-transform hover:scale-105"
+                    fill
+                    sizes="288px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h4 className="text-sm font-semibold leading-snug text-white line-clamp-2">
+                      {cert.title}
+                    </h4>
+                    <p className="mt-1 text-xs text-white/80">{cert.issuer}</p>
+                  </div>
+                  {subCerts.length > 0 && (
+                    <div className="absolute right-3 top-3 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+                      +{subCerts.length}
+                    </div>
+                  )}
                 </div>
               )}
 
-              <div className="flex flex-col gap-1.5">
-                <h4 className="text-sm font-semibold leading-tight text-foreground">
-                  {cert.title}
-                </h4>
-
-                <p className="text-xs text-muted-foreground">{cert.issuer}</p>
-
-                {cert.credentialId && (
-                  <p className="text-[10px] text-muted-foreground">
-                    ID: {cert.credentialId}
-                  </p>
-                )}
-
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                  <span className="text-[11px] text-muted-foreground">
+                    {formatDate(cert.issued)}
+                  </span>
+                </div>
                 {cert.credentialUrl && (
                   <a
                     href={cert.credentialUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-blue-500 hover:text-blue-600 hover:underline"
+                    className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Verify
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 )}
-
-                <p className="text-[10px] text-muted-foreground">
-                  {formatDate(cert.issued)}
-                </p>
               </div>
             </div>
           );
