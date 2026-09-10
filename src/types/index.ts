@@ -51,10 +51,12 @@ export interface SkillSet {
   updatedAt: string;
 }
 
-export interface SkillSet {
+export interface CurriculumVitae {
   id: string;
   uploaderId: string;
-  skill: string;
+  blobUrl: string;
+  blobId: string;
+  issued: string;
   createdAt: string;
   updatedAt: string;
 }
