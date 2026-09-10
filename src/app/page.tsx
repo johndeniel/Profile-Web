@@ -27,7 +27,7 @@ const mockPersonalInformation: PersonalInformation[] = [
     lastName: 'Dela Peña',
     title: 'Junior Java Developer',
     headline:
-      'Java Backend Developer | Financial Technology | Spring Boot & REST APIs | Backend Systems & Relational Databases',
+      'Java Backend Developer | Financial Technology Spring Boot & REST APIs | Backend Systems',
     blobUrl:
       'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/johndeniel-e84c3263-ofh07DeAj1vs5QLeGaOLL6Gf9XMbI0.png',
     blobId: 'avatar-1',
@@ -452,7 +452,9 @@ export default function HomePage() {
         <div className="flex max-w-xs flex-col gap-4">
           <Headline person={data[0]} />
           <SocialLinks links={mockSocialLinks} />
-          <TechStackList techs={mockTechStack} />
+          <div className="mt-4">
+            <TechStackList techs={mockTechStack} />
+          </div>
         </div>
         <div className="flex-1 min-h-75">
           {error && <div className="text-sm text-destructive">{error}</div>}
