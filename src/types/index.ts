@@ -60,3 +60,19 @@ export interface CurriculumVitae {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface LicenseCertificate {
+  id: string;
+  uploaderId: string;
+  title: string;
+  issuer: string;
+  issued: string;
+  level: 'MAIN' | 'SUB';
+  credentialId: string | null;
+  credentialUrl: string | null;
+  description: string | null;
+  blobUrl: string | null;
+  blobId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
