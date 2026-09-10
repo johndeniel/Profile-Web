@@ -10,6 +10,7 @@ import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
 import { CurriculumVitaeList } from '@/components/curriculum-vitae';
 import { LicenseCertificateList } from '@/components/license-certificate';
 import { useGitHubRepos } from '@/hooks/use-github-repos';
+
 import type {
   PersonalInformation,
   SocialLink,
@@ -195,83 +196,94 @@ const mockCurriculumVitae: CurriculumVitae[] = [
 
 const mockLicenseCertificates: LicenseCertificate[] = [
   {
-    id: '550e8400-e29b-41d4-a716-446655440000',
-    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    title: 'AWS Solutions Architect',
-    issuer: 'Amazon',
-    issued: '2025-01-01T00:00:00',
+    id: 'bf5f3852-91eb-4bba-8788-c7501e7b45ca',
+    blobId: 'c5682c92-d7af-4daa-a8c3-eace97d692b5',
+    blobUrl:
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/Generative_AI_Software_Engineering-38f26070-LCXgT1d9jpFe7AcRNkVX0jmb2RSseu.jpeg',
+    createdAt: '2026-09-10T14:16:27.124452',
+    credentialId: 'FZADQFXI97NY',
+    credentialUrl:
+      'https://www.coursera.org/account/accomplishments/specialization/FZADQFXI97NY?utm_source%3Dandroid%26utm_medium%3Dcertificate%26utm_content%3Dcert_image%26utm_campaign%3Dsharing_cta%26utm_product%3Ds12n',
+    description:
+      'This specialization builds AI-powered software engineering competencies through four courses covering Claude Code development, AI agents and agentic AI with Python, prompt engineering for ChatGPT, creating custom AI assistants with OpenAI GPTs, orchestrating autonomous agents, managing parallel development workflows, and transforming generative AI tools into domain-expert assistants for complex professional tasks.',
+    issued: '2025-11-09T05:32:46.821',
+    issuer: 'Vanderbilt University',
     level: 'MAIN',
-    credentialId: 'AWS-123-456',
-    credentialUrl: 'https://aws.amazon.com/verification/123',
-    description: 'AWS Certified Solutions Architect - Professional',
-    blobUrl:
-      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/resume-2025-ee3664b6-czJGPLWs9STT7S4yppY6Uwpy9pZDJC.png',
-    blobId: '550e8400-e29b-41d4-a716-446655440000',
-    createdAt: '2026-09-08T09:00:00',
-    updatedAt: '2026-09-08T09:00:00',
+    title: 'Generative AI Software Engineering',
+    updatedAt: '2026-09-10T14:16:27.124466',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
   },
   {
-    id: '550e8400-e29b-41d4-a716-446655440001',
-    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    title: 'AWS Cloud Practitioner',
-    issuer: 'Amazon',
-    issued: '2024-06-15T00:00:00',
+    id: 'd9b4ff83-b5d2-4eec-b2dc-8d4873bc2e6a',
+    blobId: '0e2b22c6-2d2a-44b3-a382-6b958ac70d6f',
+    blobUrl:
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/AI_Agents_and_Agentic_AI_with_Python___Generative_AI-4198d990-8tSQTDmvomRr0XHqvn6hztnXgiW2JT.jpeg',
+    createdAt: '2026-09-10T14:11:53.41144',
+    credentialId: 'FZADQFXI97NY',
+    credentialUrl:
+      'https://www.coursera.org/account/accomplishments/verify/O7Y5YO2HKOGS?utm_source%3Dandroid%26utm_medium%3Dcertificate%26utm_content%3Dcert_image%26utm_campaign%3Dsharing_cta%26utm_product%3Dcourse',
+    description:
+      'This course builds AI agent development competencies covering Python-based agentic AI systems, designing autonomous agents, implementing agent architectures, integrating generative AI models, building intelligent workflows, creating decision-making systems, developing multi-agent collaboration, orchestrating complex tasks, and applying agentic AI principles to solve real-world problems with practical Python implementations.',
+    issued: '2025-11-09T05:32:46.821',
+    issuer: 'Vanderbilt University',
     level: 'SUB',
-    credentialId: 'AWS-123-456',
-    credentialUrl: 'https://aws.amazon.com/verification/123',
-    description: 'AWS Cloud Practitioner Foundations',
-    blobUrl:
-      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/resume-2025-ee3664b6-czJGPLWs9STT7S4yppY6Uwpy9pZDJC.png',
-    blobId: '550e8400-e29b-41d4-a716-446655440001',
-    createdAt: '2026-09-08T09:00:00',
-    updatedAt: '2026-09-08T09:00:00',
+    title: 'AI Agents and Agentic AI with Python & Generative AI',
+    updatedAt: '2026-09-10T14:11:53.411468',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
   },
   {
-    id: '550e8400-e29b-41d4-a716-446655440002',
-    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    title: 'AWS Developer Associate',
-    issuer: 'Amazon',
-    issued: '2024-09-20T00:00:00',
+    id: 'd7fa2440-dbfe-441c-a9d7-0ad2e6afabde',
+    blobId: 'c2abeacd-d7b7-4d84-a0a9-4e5133707992',
+    blobUrl:
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/Claude_Code__Software_Engineering_with_Generative_AI_Agents-174a1b97-N913096njspruytXDtHvtO9I0shUIp.jpeg',
+    createdAt: '2026-09-10T14:11:50.28679',
+    credentialId: 'FZADQFXI97NY',
+    credentialUrl:
+      'https://www.coursera.org/account/accomplishments/verify/57IH48JHP7MZ?utm_source%3Dandroid%26utm_medium%3Dcertificate%26utm_content%3Dcert_image%26utm_campaign%3Dsharing_cta%26utm_product%3Dcourse',
+    description:
+      'This course builds software engineering competencies covering Claude Code development, building integrated automation systems with AI agents, orchestrating full-stack applications, managing parallel development workflows across multiple git branches, processing data autonomously, analyzing documents, executing complex multi-step workflows, and leveraging generative AI agents for rapid application development.',
+    issued: '2025-11-09T05:32:46.821',
+    issuer: 'Vanderbilt University',
     level: 'SUB',
-    credentialId: 'AWS-123-456',
-    credentialUrl: 'https://aws.amazon.com/verification/123',
-    description: 'AWS Certified Developer - Associate',
-    blobUrl: null,
-    blobId: null,
-    createdAt: '2026-09-08T09:00:00',
-    updatedAt: '2026-09-08T09:00:00',
+    title: 'Claude Code: Software Engineering with Generative AI Agents',
+    updatedAt: '2026-09-10T14:11:50.286842',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
   },
   {
-    id: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
-    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    title: 'Oracle Java SE Programmer',
-    issuer: 'Oracle',
-    issued: '2024-06-15T00:00:00',
-    level: 'MAIN',
-    credentialId: 'ORACLE-JAVA-789',
-    credentialUrl: 'https://education.oracle.com/verification/789',
-    description: 'Oracle Certified Professional: Java SE 17 Developer',
+    id: '751c2c63-ea10-4943-bee7-ec40a5e9ce97',
+    blobId: 'f740e1ce-d9ab-4bc1-a044-ebc9fe435bc2',
     blobUrl:
-      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/resume-2025-ee3664b6-czJGPLWs9STT7S4yppY6Uwpy9pZDJC.png',
-    blobId: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
-    createdAt: '2026-09-08T09:00:00',
-    updatedAt: '2026-09-08T09:00:00',
-  },
-  {
-    id: '6ba7b810-9dad-11d1-80b4-00c04fd430c9',
-    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    title: 'Oracle Java SE Associate',
-    issuer: 'Oracle',
-    issued: '2023-11-10T00:00:00',
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/OpenAI_GPTs__Creating_Your_Own_Custom_AI_Assistants-069e17dd-wZXXnbmsclYkQstlisAOVdo6oSmpob.jpeg',
+    createdAt: '2026-09-10T13:58:29.641188',
+    credentialId: 'FZADQFXI97NY',
+    credentialUrl:
+      'https://www.coursera.org/account/accomplishments/verify/7FCMUSUT431H?utm_source%3Dandroid%26utm_medium%3Dcertificate%26utm_content%3Dcert_image%26utm_campaign%3Dsharing_cta%26utm_product%3Dcourse',
+    description:
+      'This course builds custom AI assistant development competencies covering OpenAI GPT configuration, designing specialized AI assistants, defining custom instructions and behaviors, integrating knowledge bases, configuring conversation starters, tailoring responses to specific business contexts, deploying custom GPTs, managing assistant capabilities, and transforming generative AI tools into domain-expert assistants for professional tasks.',
+    issued: '2025-11-09T05:32:46.821',
+    issuer: 'Vanderbilt University',
     level: 'SUB',
-    credentialId: 'ORACLE-JAVA-789',
-    credentialUrl: 'https://education.oracle.com/verification/789',
-    description: 'Oracle Certified Associate: Java SE 17 Developer',
+    title: 'OpenAI GPTs: Creating Your Own Custom AI Assistants',
+    updatedAt: '2026-09-10T13:58:29.641209',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+  },
+  {
+    id: '58fcfa12-18c5-4fb5-817a-35a000416af1',
+    blobId: '4074560d-0b61-4c45-a235-8ea271cb0744',
     blobUrl:
-      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/resume-2025-ee3664b6-czJGPLWs9STT7S4yppY6Uwpy9pZDJC.png',
-    blobId: '6ba7b810-9dad-11d1-80b4-00c04fd430c9',
-    createdAt: '2026-09-08T09:00:00',
-    updatedAt: '2026-09-08T09:00:00',
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/Prompt_Engineering_for_ChatGPT-bec251a0-PTqOK381ks2O8cOgbIAbHZ94NWyQTl.jpeg',
+    createdAt: '2026-09-10T13:47:53.305067',
+    credentialId: 'FZADQFXI97NY',
+    credentialUrl:
+      'https://www.coursera.org/account/accomplishments/verify/ALFFLMX4Z6UF?utm_source%3Dandroid%26utm_medium%3Dcertificate%26utm_content%3Dcert_image%26utm_campaign%3Dsharing_cta%26utm_product%3Dcourse',
+    description:
+      'This course builds prompt engineering competencies covering effective prompt design principles, crafting clear and specific instructions, using context and examples, iterative prompt refinement, zero-shot and few-shot learning techniques, chain-of-thought prompting, controlling output format and style, troubleshooting common issues, and optimizing ChatGPT interactions for various professional applications and use cases.',
+    issued: '2025-11-09T05:32:46.821',
+    issuer: 'Vanderbilt University',
+    level: 'SUB',
+    title: 'Prompt Engineering for ChatGPT',
+    updatedAt: '2026-09-10T13:47:53.305087',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
   },
 ];
 
