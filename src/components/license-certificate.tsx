@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
 import { ExternalLink, FileText } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import type { LicenseCertificate } from '@/types';
@@ -66,7 +65,6 @@ export function LicenseCertificateList({
       {/* Certificate List */}
       <div className="flex flex-row flex-nowrap items-start gap-3 overflow-x-auto scrollbar-none">
         {mainCerts.map((cert) => {
-          const subCerts = getSubCerts(cert);
           return (
             <div
               key={cert.id}
@@ -88,16 +86,9 @@ export function LicenseCertificateList({
               )}
 
               <div className="flex flex-col gap-1.5">
-                <div className="flex items-start justify-between gap-2">
-                  <h4 className="text-sm font-semibold leading-tight text-foreground">
-                    {cert.title}
-                  </h4>
-                  {subCerts.length > 0 && (
-                    <Badge variant="secondary" className="shrink-0 text-[10px]">
-                      +{subCerts.length}
-                    </Badge>
-                  )}
-                </div>
+                <h4 className="text-sm font-semibold leading-tight text-foreground">
+                  {cert.title}
+                </h4>
 
                 <p className="text-xs text-muted-foreground">{cert.issuer}</p>
 
@@ -123,12 +114,6 @@ export function LicenseCertificateList({
                 <p className="text-[10px] text-muted-foreground">
                   {formatYear(cert.issued)}
                 </p>
-
-                {subCerts.length > 0 && (
-                  <p className="mt-1 text-[10px] text-muted-foreground">
-                    View {subCerts.length} related
-                  </p>
-                )}
               </div>
             </div>
           );
@@ -159,9 +144,6 @@ export function LicenseCertificateList({
                   <span className="text-sm font-medium text-foreground">
                     Documents
                   </span>
-                  <Badge variant="secondary" className="ml-auto text-[10px]">
-                    {getSubCerts(selectedCert).length + 1}
-                  </Badge>
                 </div>
                 <div className="flex-1 overflow-y-auto">
                   {/* Main Cert */}
