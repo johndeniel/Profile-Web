@@ -8,11 +8,7 @@ export default withNextra({
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'design-assets.adobeprojectm.com',
+        hostname: 'ac7i1iecykk48zds.public.blob.vercel-storage.com',
       },
     ],
   },
