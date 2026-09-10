@@ -5,6 +5,7 @@ import { PersonalInformationCard } from '@/components/personal-information';
 import { Headline } from '@/components/headline';
 import { SocialLinks } from '@/components/social-links';
 import { TechStackList } from '@/components/tech-stack';
+import { ProfessionalExperienceList } from '@/components/professional-experience';
 import { GitHubProjects } from '@/components/github-projects';
 import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
 import { CurriculumVitaeList } from '@/components/curriculum-vitae';
@@ -15,6 +16,7 @@ import type {
   PersonalInformation,
   SocialLink,
   TechStack,
+  ProfessionalExperience,
   CurriculumVitae,
   LicenseCertificate,
 } from '@/types';
@@ -130,6 +132,21 @@ const mockTechStack: TechStack[] = [
     tech: 'Docker',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
+  },
+];
+
+const mockProfessionalExperience: ProfessionalExperience[] = [
+  {
+    id: 'edadd3d8-e916-426f-9c25-c9d05c6bc67c',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    company: 'Easycom Japan Philippines Inc.',
+    title: 'Java Software Developer',
+    location: 'Makati City, Metro Manila',
+    type: 'CONTRACT',
+    startDate: '2025-10-20T00:00:00',
+    endDate: '2026-06-12T23:59:59.999',
+    createdAt: '2026-09-11T07:31:28.62612',
+    updatedAt: '2026-09-11T07:31:28.626169',
   },
 ];
 
@@ -452,8 +469,13 @@ export default function HomePage() {
         <div className="flex max-w-xs flex-col gap-4">
           <Headline person={data[0]} />
           <SocialLinks links={mockSocialLinks} />
-          <div className="mt-4">
+          <div className="mt-8">
             <TechStackList techs={mockTechStack} />
+          </div>
+          <div className="mt-8">
+            <ProfessionalExperienceList
+              experiences={mockProfessionalExperience}
+            />
           </div>
         </div>
         <div className="flex-1 min-h-75">

@@ -62,6 +62,19 @@ export interface CurriculumVitae {
   updatedAt: string;
 }
 
+export interface ProfessionalExperience {
+  id: string;
+  uploaderId: string;
+  company: string;
+  title: string;
+  location: string;
+  type: string;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface LicenseCertificate {
   id: string;
   uploaderId: string;
