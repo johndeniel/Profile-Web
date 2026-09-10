@@ -14,6 +14,118 @@ function formatYear(dateString: string): string {
   return new Date(dateString).getFullYear().toString();
 }
 
+function ImageGrid({ images }: { images: (string | null)[] }) {
+  const validImages = images.filter(Boolean) as string[];
+  const count = validImages.length;
+
+  if (count === 0) return null;
+
+  if (count === 1) {
+    return (
+      <div className="mb-3 overflow-hidden rounded-md">
+        <Image
+          src={validImages[0]}
+          alt=""
+          width={300}
+          height={200}
+          sizes="224px"
+          loading="eager"
+          className="h-40 w-full object-cover transition-transform hover:scale-105"
+        />
+      </div>
+    );
+  }
+
+  if (count === 2) {
+    return (
+      <div className="mb-3 grid grid-cols-2 gap-0.5 overflow-hidden rounded-md">
+        {validImages.map((src, i) => (
+          <Image
+            key={i}
+            src={src}
+            alt=""
+            width={150}
+            height={150}
+            sizes="112px"
+            loading="eager"
+            className="h-32 w-full object-cover transition-transform hover:scale-105"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (count === 3) {
+    return (
+      <div className="mb-3 grid grid-cols-2 gap-0.5 overflow-hidden rounded-md">
+        <Image
+          src={validImages[0]}
+          alt=""
+          width={150}
+          height={300}
+          sizes="112px"
+          loading="eager"
+          className="row-span-2 h-full min-h-[164px] w-full object-cover transition-transform hover:scale-105"
+        />
+        {validImages.slice(1).map((src, i) => (
+          <Image
+            key={i}
+            src={src}
+            alt=""
+            width={150}
+            height={150}
+            sizes="112px"
+            loading="eager"
+            className="h-[80px] w-full object-cover transition-transform hover:scale-105"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (count === 4) {
+    return (
+      <div className="mb-3 grid grid-cols-2 gap-0.5 overflow-hidden rounded-md">
+        {validImages.map((src, i) => (
+          <Image
+            key={i}
+            src={src}
+            alt=""
+            width={150}
+            height={150}
+            sizes="112px"
+            loading="eager"
+            className="h-[80px] w-full object-cover transition-transform hover:scale-105"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-3 grid grid-cols-2 gap-0.5 overflow-hidden rounded-md">
+      {validImages.slice(0, 4).map((src, i) => (
+        <div key={i} className="relative">
+          <Image
+            src={src}
+            alt=""
+            width={150}
+            height={150}
+            sizes="112px"
+            loading="eager"
+            className="h-[80px] w-full object-cover transition-transform hover:scale-105"
+          />
+          {i === 3 && count > 4 && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+              <span className="text-lg font-bold text-white">+{count - 4}</span>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function LicenseCertificateList({
   certificates,
 }: LicenseCertificateListProps) {
@@ -65,25 +177,15 @@ export function LicenseCertificateList({
       {/* Certificate List */}
       <div className="flex flex-row flex-nowrap items-start gap-3 overflow-x-auto scrollbar-none">
         {mainCerts.map((cert) => {
+          const subCerts = getSubCerts(cert);
+          const allImages = [cert.blobUrl, ...subCerts.map((s) => s.blobUrl)];
           return (
             <div
               key={cert.id}
               className="shrink-0 w-64 cursor-pointer rounded-lg border border-border bg-card p-4 transition-all hover:border-muted-foreground/20 hover:shadow-md"
               onClick={() => handleOpenDialog(cert)}
             >
-              {cert.blobUrl && (
-                <div className="mb-3 overflow-hidden rounded-md">
-                  <Image
-                    src={cert.blobUrl}
-                    alt={cert.title}
-                    width={300}
-                    height={200}
-                    sizes="224px"
-                    loading="eager"
-                    className="h-36 w-full object-cover transition-transform hover:scale-105"
-                  />
-                </div>
-              )}
+              <ImageGrid images={allImages} />
 
               <div className="flex flex-col gap-1.5">
                 <h4 className="text-sm font-semibold leading-tight text-foreground">
