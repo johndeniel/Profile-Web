@@ -8,12 +8,14 @@ import { SkillSetList } from '@/components/skill-set';
 import { GitHubProjects } from '@/components/github-projects';
 import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
 import { CurriculumVitaeList } from '@/components/curriculum-vitae';
+import { LicenseCertificateList } from '@/components/license-certificate';
 import { useGitHubRepos } from '@/hooks/use-github-repos';
 import type {
   PersonalInformation,
   SocialLink,
   SkillSet,
   CurriculumVitae,
+  LicenseCertificate,
 } from '@/types';
 
 const mockPersonalInformation: PersonalInformation[] = [
@@ -191,6 +193,88 @@ const mockCurriculumVitae: CurriculumVitae[] = [
   },
 ];
 
+const mockLicenseCertificates: LicenseCertificate[] = [
+  {
+    id: '550e8400-e29b-41d4-a716-446655440000',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    title: 'AWS Solutions Architect',
+    issuer: 'Amazon',
+    issued: '2025-01-01T00:00:00',
+    level: 'MAIN',
+    credentialId: 'AWS-123-456',
+    credentialUrl: 'https://aws.amazon.com/verification/123',
+    description: 'AWS Certified Solutions Architect - Professional',
+    blobUrl:
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/resume-2025-ee3664b6-czJGPLWs9STT7S4yppY6Uwpy9pZDJC.png',
+    blobId: '550e8400-e29b-41d4-a716-446655440000',
+    createdAt: '2026-09-08T09:00:00',
+    updatedAt: '2026-09-08T09:00:00',
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440001',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    title: 'AWS Cloud Practitioner',
+    issuer: 'Amazon',
+    issued: '2024-06-15T00:00:00',
+    level: 'SUB',
+    credentialId: 'AWS-123-456',
+    credentialUrl: 'https://aws.amazon.com/verification/123',
+    description: 'AWS Cloud Practitioner Foundations',
+    blobUrl:
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/resume-2025-ee3664b6-czJGPLWs9STT7S4yppY6Uwpy9pZDJC.png',
+    blobId: '550e8400-e29b-41d4-a716-446655440001',
+    createdAt: '2026-09-08T09:00:00',
+    updatedAt: '2026-09-08T09:00:00',
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440002',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    title: 'AWS Developer Associate',
+    issuer: 'Amazon',
+    issued: '2024-09-20T00:00:00',
+    level: 'SUB',
+    credentialId: 'AWS-123-456',
+    credentialUrl: 'https://aws.amazon.com/verification/123',
+    description: 'AWS Certified Developer - Associate',
+    blobUrl: null,
+    blobId: null,
+    createdAt: '2026-09-08T09:00:00',
+    updatedAt: '2026-09-08T09:00:00',
+  },
+  {
+    id: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    title: 'Oracle Java SE Programmer',
+    issuer: 'Oracle',
+    issued: '2024-06-15T00:00:00',
+    level: 'MAIN',
+    credentialId: 'ORACLE-JAVA-789',
+    credentialUrl: 'https://education.oracle.com/verification/789',
+    description: 'Oracle Certified Professional: Java SE 17 Developer',
+    blobUrl:
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/resume-2025-ee3664b6-czJGPLWs9STT7S4yppY6Uwpy9pZDJC.png',
+    blobId: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+    createdAt: '2026-09-08T09:00:00',
+    updatedAt: '2026-09-08T09:00:00',
+  },
+  {
+    id: '6ba7b810-9dad-11d1-80b4-00c04fd430c9',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    title: 'Oracle Java SE Associate',
+    issuer: 'Oracle',
+    issued: '2023-11-10T00:00:00',
+    level: 'SUB',
+    credentialId: 'ORACLE-JAVA-789',
+    credentialUrl: 'https://education.oracle.com/verification/789',
+    description: 'Oracle Certified Associate: Java SE 17 Developer',
+    blobUrl:
+      'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/resume-2025-ee3664b6-czJGPLWs9STT7S4yppY6Uwpy9pZDJC.png',
+    blobId: '6ba7b810-9dad-11d1-80b4-00c04fd430c9',
+    createdAt: '2026-09-08T09:00:00',
+    updatedAt: '2026-09-08T09:00:00',
+  },
+];
+
 export default function HomePage() {
   const [data] = useState<PersonalInformation[]>(mockPersonalInformation);
   const { repos, loading, error } = useGitHubRepos(
@@ -218,6 +302,9 @@ export default function HomePage() {
           {!loading && !error && <GitHubProjects repos={repos} />}
           <div className="mt-8">
             <CurriculumVitaeList cvs={mockCurriculumVitae} />
+          </div>
+          <div className="mt-8">
+            <LicenseCertificateList certificates={mockLicenseCertificates} />
           </div>
         </div>
       </div>
