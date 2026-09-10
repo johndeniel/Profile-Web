@@ -99,7 +99,7 @@ export function LicenseCertificateList({
               }}
             >
               {cert.blobUrl && (
-                <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-muted/50 to-muted">
+                <div className="relative aspect-16/10 overflow-hidden bg-linear-to-br from-muted/50 to-muted">
                   <Image
                     src={cert.blobUrl}
                     alt={cert.title}
@@ -108,7 +108,7 @@ export function LicenseCertificateList({
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent" />
 
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <h4 className="line-clamp-2 text-sm font-semibold leading-snug text-white">
@@ -323,7 +323,7 @@ export function LicenseCertificateList({
                     </div>
 
                     {/* Certificate Image */}
-                    <div className="flex-1 overflow-auto bg-gradient-to-br from-muted/30 to-muted/10 p-6">
+                    <div className="flex-1 overflow-auto bg-linear-to-br from-muted/30 to-muted/10 p-6">
                       {previewCert.blobUrl ? (
                         <div className="mx-auto flex h-full max-w-2xl items-center justify-center">
                           <Image
