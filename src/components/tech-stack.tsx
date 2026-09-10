@@ -1,26 +1,26 @@
 'use client';
 
-import type { SkillSet } from '@/types';
+import type { TechStack } from '@/types';
 
-interface SkillSetProps {
-  skills: SkillSet[];
+interface TechStackProps {
+  techs: TechStack[];
 }
 
-export function SkillSetList({ skills }: SkillSetProps) {
+export function TechStackList({ techs }: TechStackProps) {
   return (
     <div className="flex flex-col gap-3 pt-8">
       <div className="flex items-center justify-between">
         <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
-          Skills
+          Tech Stack
         </h3>
       </div>
       <div className="flex flex-wrap gap-2">
-        {skills.map((item) => (
+        {techs.map((item) => (
           <span
             key={item.id}
             className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground"
           >
-            {item.skill}
+            {item.tech}
           </span>
         ))}
       </div>

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
-import { ExternalLink, Award, ChevronRight, X } from 'lucide-react';
+import { ExternalLink, Award, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import type { LicenseCertificate } from '@/types';
 
@@ -12,6 +12,7 @@ interface LicenseCertificateListProps {
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
+
   return date.toLocaleDateString('en-US', {
     month: 'short',
     year: 'numeric',
@@ -20,6 +21,7 @@ function formatDate(dateString: string): string {
 
 function formatFullDate(dateString: string): string {
   const date = new Date(dateString);
+
   return date.toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -33,9 +35,11 @@ export function LicenseCertificateList({
   const [selectedCert, setSelectedCert] = useState<LicenseCertificate | null>(
     null
   );
+
   const [previewCert, setPreviewCert] = useState<LicenseCertificate | null>(
     null
   );
+
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   const mainCerts = useMemo(
@@ -45,14 +49,17 @@ export function LicenseCertificateList({
 
   const subCertsByCredentialId = useMemo(() => {
     const map = new Map<string, LicenseCertificate[]>();
+
     certificates
       .filter((cert) => cert.level === 'SUB')
       .forEach((cert) => {
         const key = cert.credentialId ?? cert.id;
         const existing = map.get(key) ?? [];
+
         existing.push(cert);
         map.set(key, existing);
       });
+
     return map;
   }, [certificates]);
 
@@ -69,6 +76,7 @@ export function LicenseCertificateList({
         <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
           Licenses & Certificates
         </h3>
+
         <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
           {certificates.length} credentials
         </span>
@@ -78,10 +86,11 @@ export function LicenseCertificateList({
       <div className="flex flex-row flex-nowrap items-start gap-4 overflow-x-auto scrollbar-none pb-2">
         {mainCerts.map((cert) => {
           const subCerts = getSubCerts(cert);
+
           return (
             <div
               key={cert.id}
-              className="group shrink-0 w-72 cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-card transition-all duration-300 hover:border-border hover:shadow-lg hover:shadow-black/5"
+              className="group w-72 shrink-0 cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-card transition-all duration-300 hover:border-border hover:shadow-lg hover:shadow-black/5"
               onClick={() => {
                 setSelectedCert(cert);
                 setPreviewCert(cert);
@@ -97,13 +106,17 @@ export function LicenseCertificateList({
                     sizes="288px"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h4 className="text-sm font-semibold leading-snug text-white line-clamp-2">
+                    <h4 className="line-clamp-2 text-sm font-semibold leading-snug text-white">
                       {cert.title}
                     </h4>
+
                     <p className="mt-1 text-xs text-white/80">{cert.issuer}</p>
                   </div>
+
                   {subCerts.length > 0 && (
                     <div className="absolute right-3 top-3 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
                       +{subCerts.length}
@@ -115,10 +128,12 @@ export function LicenseCertificateList({
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+
                   <span className="text-[11px] text-muted-foreground">
                     {formatDate(cert.issued)}
                   </span>
                 </div>
+
                 {cert.credentialUrl && (
                   <a
                     href={cert.credentialUrl}
@@ -141,16 +156,19 @@ export function LicenseCertificateList({
       <Dialog
         open={selectedCert !== null}
         onOpenChange={(open) => {
-          if (!open) setSelectedCert(null);
+          if (!open) {
+            setSelectedCert(null);
+          }
         }}
       >
         <DialogContent
-          className="gap-0 p-0 sm:max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl border border-border/60 bg-card shadow-2xl"
+          className="max-h-[90vh] gap-0 overflow-hidden rounded-2xl border border-border/60 bg-card p-0 shadow-2xl sm:max-w-4xl"
           showCloseButton={false}
         >
           <DialogTitle className="sr-only">{selectedCert?.title}</DialogTitle>
+
           {selectedCert && (
-            <div className="flex flex-col h-full max-h-[90vh]">
+            <div className="flex h-full max-h-[90vh] flex-col">
               {/* Top Bar */}
               <div className="flex items-center justify-end border-b border-border/60 px-6 py-4">
                 <div className="flex items-center gap-2">
@@ -165,6 +183,7 @@ export function LicenseCertificateList({
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   )}
+
                   <button
                     type="button"
                     onClick={() => {
@@ -179,15 +198,16 @@ export function LicenseCertificateList({
               </div>
 
               {/* Content Area */}
-              <div className="flex flex-1 min-h-0 overflow-hidden">
+              <div className="flex min-h-0 flex-1 overflow-hidden">
                 {/* Sidebar - All Certs */}
-                <div className="hidden sm:flex w-64 flex-col border-r border-border/60 bg-muted/20">
-                  <div className="px-4 py-3 border-b border-border/60">
+                <div className="hidden w-64 flex-col border-r border-border/60 bg-muted/20 sm:flex">
+                  <div className="border-b border-border/60 px-4 py-3">
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Certificates ({1 + getSubCerts(selectedCert).length})
                     </p>
                   </div>
-                  <div className="flex-1 overflow-y-auto p-2 space-y-1">
+
+                  <div className="flex-1 space-y-1 overflow-y-auto p-2">
                     {/* Main Cert */}
                     <button
                       type="button"
@@ -205,6 +225,7 @@ export function LicenseCertificateList({
                             src={selectedCert.blobUrl}
                             alt=""
                             fill
+                            sizes="56px"
                             className="object-cover"
                           />
                         </div>
@@ -213,10 +234,12 @@ export function LicenseCertificateList({
                           <Award className="h-4 w-4 text-muted-foreground/50" />
                         </div>
                       )}
-                      <div className="flex-1 min-w-0 pt-0.5">
-                        <p className="text-xs font-medium leading-tight text-foreground line-clamp-2">
+
+                      <div className="min-w-0 flex-1 pt-0.5">
+                        <p className="line-clamp-2 text-xs font-medium leading-tight text-foreground">
                           {selectedCert.title}
                         </p>
+
                         <p className="mt-1 text-[10px] text-muted-foreground">
                           {formatDate(selectedCert.issued)}
                         </p>
@@ -242,6 +265,7 @@ export function LicenseCertificateList({
                               src={subCert.blobUrl}
                               alt=""
                               fill
+                              sizes="56px"
                               className="object-cover"
                             />
                           </div>
@@ -250,10 +274,12 @@ export function LicenseCertificateList({
                             <Award className="h-4 w-4 text-muted-foreground/50" />
                           </div>
                         )}
-                        <div className="flex-1 min-w-0 pt-0.5">
-                          <p className="text-xs font-medium leading-tight text-foreground line-clamp-2">
+
+                        <div className="min-w-0 flex-1 pt-0.5">
+                          <p className="line-clamp-2 text-xs font-medium leading-tight text-foreground">
                             {subCert.title}
                           </p>
+
                           <p className="mt-1 text-[10px] text-muted-foreground">
                             {formatDate(subCert.issued)}
                           </p>
@@ -265,12 +291,13 @@ export function LicenseCertificateList({
 
                 {/* Main Preview */}
                 {previewCert && (
-                  <div className="flex flex-1 flex-col min-h-0">
+                  <div className="flex min-h-0 flex-1 flex-col">
                     {/* Title and Description */}
-                    <div className="border-b border-border/60 px-6 py-4 bg-muted/10">
-                      <h3 className="text-base font-semibold text-foreground mb-1">
+                    <div className="border-b border-border/60 bg-muted/10 px-6 py-4">
+                      <h3 className="mb-1 text-base font-semibold text-foreground">
                         {previewCert.title}
                       </h3>
+
                       {previewCert.description && (
                         <>
                           <p
@@ -280,6 +307,7 @@ export function LicenseCertificateList({
                           >
                             {previewCert.description}
                           </p>
+
                           {previewCert.description.length > 150 && (
                             <button
                               type="button"
@@ -313,10 +341,12 @@ export function LicenseCertificateList({
                             <div className="rounded-2xl bg-muted p-6">
                               <Award className="h-10 w-10" />
                             </div>
+
                             <div className="text-center">
                               <p className="text-sm font-medium">
                                 No preview available
                               </p>
+
                               <p className="mt-1 text-xs text-muted-foreground/70">
                                 Click verify to view on issuer&apos;s website
                               </p>
@@ -342,6 +372,7 @@ export function LicenseCertificateList({
                       </span>
                     )}
                   </div>
+
                   <p className="text-[10px] text-muted-foreground/60">
                     {previewCert.issuer}
                   </p>

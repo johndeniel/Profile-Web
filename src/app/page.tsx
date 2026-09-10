@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PersonalInformationCard } from '@/components/personal-information';
 import { Contact } from '@/components/contact';
 import { SocialLinks } from '@/components/social-links';
-import { SkillSetList } from '@/components/skill-set';
+import { TechStackList } from '@/components/tech-stack';
 import { GitHubProjects } from '@/components/github-projects';
 import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
 import { CurriculumVitaeList } from '@/components/curriculum-vitae';
@@ -14,7 +14,7 @@ import { useGitHubRepos } from '@/hooks/use-github-repos';
 import type {
   PersonalInformation,
   SocialLink,
-  SkillSet,
+  TechStack,
   CurriculumVitae,
   LicenseCertificate,
 } from '@/types';
@@ -72,60 +72,60 @@ const mockSocialLinks: SocialLink[] = [
   },
 ];
 
-const mockSkillSet: SkillSet[] = [
+const mockTechStack: TechStack[] = [
   {
     id: '1',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Java',
+    tech: 'Java',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '2',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Spring Boot',
+    tech: 'Spring Boot',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '3',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'SQL',
+    tech: 'SQL',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '4',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Maven',
+    tech: 'Maven',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '5',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'REST API',
+    tech: 'REST API',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '6',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Git',
+    tech: 'Git',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '7',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'GitHub',
+    tech: 'GitHub',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '8',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Docker',
+    tech: 'Docker',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
@@ -450,7 +450,7 @@ export default function HomePage() {
         <div className="mt-4 flex max-w-xs flex-col gap-4">
           <Contact person={data[0]} />
           <SocialLinks links={mockSocialLinks} />
-          <SkillSetList skills={mockSkillSet} />
+          <TechStackList techs={mockTechStack} />
         </div>
         <div className="flex-1 min-h-75">
           {error && <div className="text-sm text-destructive">{error}</div>}

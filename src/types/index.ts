@@ -43,10 +43,10 @@ export interface SocialLink {
   updatedAt: string;
 }
 
-export interface SkillSet {
+export interface TechStack {
   id: string;
   uploaderId: string;
-  skill: string;
+  tech: string;
   createdAt: string;
   updatedAt: string;
 }
