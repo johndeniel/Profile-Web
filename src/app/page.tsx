@@ -6,6 +6,7 @@ import { Headline } from '@/components/headline';
 import { SocialLinks } from '@/components/social-links';
 import { TechStackList } from '@/components/tech-stack';
 import { ProfessionalExperienceList } from '@/components/professional-experience';
+import { EducationalAttainmentList } from '@/components/educational-attainment';
 import { GitHubProjects } from '@/components/github-projects';
 import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
 import { CurriculumVitaeList } from '@/components/curriculum-vitae';
@@ -17,6 +18,7 @@ import type {
   SocialLink,
   TechStack,
   ProfessionalExperience,
+  EducationalAttainment,
   CurriculumVitae,
   LicenseCertificate,
 } from '@/types';
@@ -147,6 +149,21 @@ const mockProfessionalExperience: ProfessionalExperience[] = [
     endDate: '2026-06-12T23:59:59.999',
     createdAt: '2026-09-11T07:31:28.62612',
     updatedAt: '2026-09-11T07:31:28.626169',
+  },
+];
+
+const mockEducationalAttainment: EducationalAttainment[] = [
+  {
+    id: 'cf7c4186-6931-4b60-a31d-fe9b2abb0e08',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    institution: 'Bulacan State University',
+    degree: "Bachelor's Degree",
+    field: 'Information Technology',
+    award: 'Summa Cum Laude',
+    startDate: '2021-08-05T00:00:00',
+    endDate: '2025-07-15T23:59:59.999',
+    createdAt: '2026-09-11T07:23:23.050308',
+    updatedAt: '2026-09-11T07:23:23.050334',
   },
 ];
 
@@ -476,6 +493,9 @@ export default function HomePage() {
             <ProfessionalExperienceList
               experiences={mockProfessionalExperience}
             />
+          </div>
+          <div className="mt-8">
+            <EducationalAttainmentList educations={mockEducationalAttainment} />
           </div>
         </div>
         <div className="flex-1 min-h-75">

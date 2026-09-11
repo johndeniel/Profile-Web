@@ -62,6 +62,19 @@ export interface CurriculumVitae {
   updatedAt: string;
 }
 
+export interface EducationalAttainment {
+  id: string;
+  uploaderId: string;
+  institution: string;
+  degree: string;
+  field: string;
+  award: string | null;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ProfessionalExperience {
   id: string;
   uploaderId: string;

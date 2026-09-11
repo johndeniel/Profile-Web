@@ -1,9 +1,9 @@
 'use client';
 
-import type { ProfessionalExperience } from '@/types';
+import type { EducationalAttainment } from '@/types';
 
-interface ProfessionalExperienceProps {
-  experiences: ProfessionalExperience[];
+interface EducationalAttainmentProps {
+  educations: EducationalAttainment[];
 }
 
 function formatDate(dateString: string): string {
@@ -14,34 +14,36 @@ function formatDate(dateString: string): string {
   });
 }
 
-export function ProfessionalExperienceList({
-  experiences,
-}: ProfessionalExperienceProps) {
+export function EducationalAttainmentList({
+  educations,
+}: EducationalAttainmentProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">
-          Experience
+          Educational
         </h3>
       </div>
       <div className="flex flex-col gap-4">
-        {experiences.map((item) => (
+        {educations.map((item) => (
           <div key={item.id} className="flex flex-col gap-1">
             <h4 className="text-sm font-semibold text-foreground">
-              {item.title}
+              {item.degree} in {item.field}
             </h4>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{item.company}</span>
-              <span>&middot;</span>
-              <span>{item.type}</span>
+              <span>{item.institution}</span>
+              {item.award && (
+                <>
+                  <span>&middot;</span>
+                  <span>{item.award}</span>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span>
                 {formatDate(item.startDate)} -{' '}
                 {item.endDate ? formatDate(item.endDate) : 'Present'}
               </span>
-              <span>&middot;</span>
-              <span>{item.location}</span>
             </div>
           </div>
         ))}
