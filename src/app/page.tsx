@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { PersonalInformationCard } from '@/components/personal-information';
-import { Contact } from '@/components/contact';
+import { Headline } from '@/components/headline';
 import { SocialLinks } from '@/components/social-links';
-import { SkillSetList } from '@/components/skill-set';
+import { TechStackList } from '@/components/tech-stack';
+import { ProfessionalExperienceList } from '@/components/professional-experience';
+import { EducationalAttainmentList } from '@/components/educational-attainment';
 import { GitHubProjects } from '@/components/github-projects';
 import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
 import { CurriculumVitaeList } from '@/components/curriculum-vitae';
@@ -14,7 +16,9 @@ import { useGitHubRepos } from '@/hooks/use-github-repos';
 import type {
   PersonalInformation,
   SocialLink,
-  SkillSet,
+  TechStack,
+  ProfessionalExperience,
+  EducationalAttainment,
   CurriculumVitae,
   LicenseCertificate,
 } from '@/types';
@@ -25,7 +29,9 @@ const mockPersonalInformation: PersonalInformation[] = [
     firstName: 'John Deniel',
     middleName: 'Santos',
     lastName: 'Dela Peña',
-    headline: 'Junior Java Developer',
+    title: 'Junior Java Developer',
+    headline:
+      'Java Backend Developer | Financial Technology Spring Boot & REST APIs | Backend Systems',
     blobUrl:
       'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/johndeniel-e84c3263-ofh07DeAj1vs5QLeGaOLL6Gf9XMbI0.png',
     blobId: 'avatar-1',
@@ -72,62 +78,92 @@ const mockSocialLinks: SocialLink[] = [
   },
 ];
 
-const mockSkillSet: SkillSet[] = [
+const mockTechStack: TechStack[] = [
   {
     id: '1',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Java',
+    tech: 'Java',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '2',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Spring Boot',
+    tech: 'Spring Boot',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '3',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'SQL',
+    tech: 'SQL',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '4',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Maven',
+    tech: 'Maven',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '5',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'REST API',
+    tech: 'REST API',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '6',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Git',
+    tech: 'Git',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '7',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'GitHub',
+    tech: 'GitHub',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   },
   {
     id: '8',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
-    skill: 'Docker',
+    tech: 'Docker',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
+  },
+];
+
+const mockProfessionalExperience: ProfessionalExperience[] = [
+  {
+    id: 'edadd3d8-e916-426f-9c25-c9d05c6bc67c',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    company: 'Easycom Japan Philippines Inc.',
+    title: 'Java Software Developer',
+    location: 'Makati City, Metro Manila',
+    type: 'CONTRACT',
+    startDate: '2025-10-20T00:00:00',
+    endDate: '2026-06-12T23:59:59.999',
+    createdAt: '2026-09-11T07:31:28.62612',
+    updatedAt: '2026-09-11T07:31:28.626169',
+  },
+];
+
+const mockEducationalAttainment: EducationalAttainment[] = [
+  {
+    id: 'cf7c4186-6931-4b60-a31d-fe9b2abb0e08',
+    uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+    institution: 'Bulacan State University',
+    degree: "Bachelor's Degree",
+    field: 'Information Technology',
+    award: 'Summa Cum Laude',
+    startDate: '2021-08-05T00:00:00',
+    endDate: '2025-07-15T23:59:59.999',
+    createdAt: '2026-09-11T07:23:23.050308',
+    updatedAt: '2026-09-11T07:23:23.050334',
   },
 ];
 
@@ -447,10 +483,20 @@ export default function HomePage() {
         <PersonalInformationCard key={person.id} person={person} />
       ))}
       <div className="mt-8 flex gap-16">
-        <div className="mt-4 flex max-w-xs flex-col gap-4">
-          <Contact person={data[0]} />
+        <div className="flex max-w-xs flex-col gap-4">
+          <Headline person={data[0]} />
           <SocialLinks links={mockSocialLinks} />
-          <SkillSetList skills={mockSkillSet} />
+          <div className="mt-8">
+            <TechStackList techs={mockTechStack} />
+          </div>
+          <div className="mt-8">
+            <ProfessionalExperienceList
+              experiences={mockProfessionalExperience}
+            />
+          </div>
+          <div className="mt-8">
+            <EducationalAttainmentList educations={mockEducationalAttainment} />
+          </div>
         </div>
         <div className="flex-1 min-h-75">
           {error && <div className="text-sm text-destructive">{error}</div>}

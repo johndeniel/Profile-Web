@@ -3,6 +3,7 @@ export interface PersonalInformation {
   firstName: string;
   middleName: string;
   lastName: string;
+  title: string;
   headline: string;
   blobUrl: string;
   blobId: string;
@@ -43,10 +44,10 @@ export interface SocialLink {
   updatedAt: string;
 }
 
-export interface SkillSet {
+export interface TechStack {
   id: string;
   uploaderId: string;
-  skill: string;
+  tech: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -57,6 +58,32 @@ export interface CurriculumVitae {
   blobUrl: string;
   blobId: string;
   issued: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EducationalAttainment {
+  id: string;
+  uploaderId: string;
+  institution: string;
+  degree: string;
+  field: string;
+  award: string | null;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProfessionalExperience {
+  id: string;
+  uploaderId: string;
+  company: string;
+  title: string;
+  location: string;
+  type: string;
+  startDate: string;
+  endDate: string;
   createdAt: string;
   updatedAt: string;
 }
