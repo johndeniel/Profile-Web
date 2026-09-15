@@ -17,9 +17,9 @@ nav.nextra-nav {
 }
 
 @theme inline {
-  --font-heading: var(--font-heading);
+  --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-mono: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -61,6 +61,14 @@ nav.nextra-nav {
 }
 
 :root {
+  /* Bridge our fonts into the Nextra docs theme so navbar, sidebar,
+     search and footer use the same typefaces as page content */
+  --x-font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --x-font-mono: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --x-default-font-family:
+    var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --x-default-mono-font-family:
+    var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -144,11 +152,57 @@ nav.nextra-nav {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings:
+      'cv11' 1,
+      'ss01' 1;
+    line-height: 1.65;
+  }
+  /* Titles — Inter for every heading, site-wide.
+     Plain selectors (not :where) so this beats the Nextra theme's own rules. */
+  html h1,
+  html h2,
+  html h3,
+  html h4,
+  html h5,
+  html h6 {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  /* Refine the font-heading utility (used by cards / section titles) */
+  .font-heading {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  /* Professional body treatment — Inter for every description / paragraph */
+  html p,
+  html li,
+  html blockquote,
+  html dd,
+  html figcaption {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+  /* Code / labels / metadata — Inter, like everything else */
+  :where(code, pre, kbd, samp) {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+  /* Form controls inherit body type instead of falling back to system UI */
+  :where(input, button, textarea, select) {
+    font: inherit;
   }
 }
 
