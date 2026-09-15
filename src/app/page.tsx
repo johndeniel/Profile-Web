@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { PersonalInformationCard } from '@/components/personal-information';
 import { Headline } from '@/components/headline';
 import { SocialLinks } from '@/components/social-links';
@@ -24,47 +23,50 @@ import {
 
 import type { PersonalInformation } from '@/types';
 
+/**
+ * Profile homepage: hero card plus a sidebar (headline, links, skills,
+ * background) and a main column (projects, CV, certificates).
+ * Client-rendered because the GitHub section fetches live repo data.
+ */
 export default function HomePage() {
-  const [data] = useState<PersonalInformation[]>(mockPersonalInformation);
+  // TODO: replace with API data once the backend is wired up.
+  const people: PersonalInformation[] = mockPersonalInformation;
   const { repos, loading, error } = useGitHubRepos(
-    process.env.NEXT_PUBLIC_GITHUB_USERNAME!
+    process.env.NEXT_PUBLIC_GITHUB_USERNAME ?? ''
   );
 
-  if (data.length === 0) {
-    return null;
-  }
+  if (people.length === 0) return null;
 
   return (
-    <main className="mx-auto max-w-screen-2xl py-8">
-      {data.map((person) => (
+    <main className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Profile hero */}
+      {people.map((person) => (
         <PersonalInformationCard key={person.id} person={person} />
       ))}
-      <div className="mt-8 flex gap-16">
-        <div className="flex max-w-xs flex-col gap-4">
-          <Headline person={data[0]} />
+
+      <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:gap-16">
+        {/* Sidebar: identity, skills, background */}
+        <div className="flex w-full flex-col gap-8 lg:max-w-xs lg:shrink-0">
+          <Headline person={people[0]} />
           <SocialLinks links={mockSocialLinks} />
-          <div className="mt-8">
-            <TechStackList techs={mockTechStack} />
-          </div>
-          <div className="mt-8">
-            <ProfessionalExperienceList
-              experiences={mockProfessionalExperience}
-            />
-          </div>
-          <div className="mt-8">
-            <EducationalAttainmentList educations={mockEducationalAttainment} />
-          </div>
+          <TechStackList techs={mockTechStack} />
+          <ProfessionalExperienceList
+            experiences={mockProfessionalExperience}
+          />
+          <EducationalAttainmentList educations={mockEducationalAttainment} />
         </div>
-        <div className="flex-1 min-h-75">
-          {error && <div className="text-sm text-destructive">{error}</div>}
+
+        {/* Main column: work output */}
+        <div className="flex min-h-75 min-w-0 flex-1 flex-col gap-8">
+          {error && (
+            <div role="alert" className="text-sm text-destructive">
+              {error}
+            </div>
+          )}
           {loading && <GitHubProjectsSkeleton />}
           {!loading && !error && <GitHubProjects repos={repos} />}
-          <div className="mt-8">
-            <CurriculumVitaeList cvs={mockCurriculumVitae} />
-          </div>
-          <div className="mt-8">
-            <LicenseCertificateList certificates={mockLicenseCertificates} />
-          </div>
+          <CurriculumVitaeList cvs={mockCurriculumVitae} />
+          <LicenseCertificateList certificates={mockLicenseCertificates} />
         </div>
       </div>
     </main>

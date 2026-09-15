@@ -22,17 +22,6 @@ export interface GitHubRepo {
   stargazers_count: number;
   language: string | null;
   fork: boolean;
-  owner: {
-    login: string;
-  };
-}
-
-export interface PaginatedResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  currentPage: number;
-  size: number;
 }
 
 export interface SocialLink {

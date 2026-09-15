@@ -3,12 +3,24 @@
 import { useEffect, useState } from 'react';
 import type { GitHubRepo } from '@/types';
 
+/**
+ * Fetches a user's public repos (newest first), excluding forks.
+ * An empty username is a misconfiguration: no request is made and an error
+ * is surfaced instead of fetching garbage.
+ */
 export function useGitHubRepos(username: string) {
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(() => username.trim().length > 0);
+  const [error, setError] = useState<string | null>(() =>
+    username.trim().length > 0 ? null : 'GitHub username is not configured'
+  );
 
   useEffect(() => {
+    if (!username) return;
+
+    // Ignore late responses if the component unmounts mid-request.
+    let cancelled = false;
+
     async function fetchRepos() {
       try {
         const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
@@ -18,16 +30,26 @@ export function useGitHubRepos(username: string) {
             headers: token ? { Authorization: `token ${token}` } : {},
           }
         );
-        const data = await res.json();
-        setRepos(data.filter((repo: GitHubRepo) => !repo.fork));
+        if (!res.ok) {
+          throw new Error(`GitHub API responded with ${res.status}`);
+        }
+        const data: GitHubRepo[] = await res.json();
+        if (!cancelled) setRepos(data.filter((repo) => !repo.fork));
       } catch (err) {
-        setError('Failed to fetch repos');
-        console.error('Failed to fetch repos:', err);
+        if (!cancelled) {
+          setError('Failed to fetch repos');
+          console.error('Failed to fetch repos:', err);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
+
     fetchRepos();
+
+    return () => {
+      cancelled = true;
+    };
   }, [username]);
 
   return { repos, loading, error };
