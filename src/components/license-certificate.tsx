@@ -300,7 +300,7 @@ export function LicenseCertificateList({
                       {previewCert.description && (
                         <>
                           <p
-                            className={`text-sm leading-relaxed text-foreground/80 ${
+                            className={`text-justify text-sm leading-relaxed text-foreground/80 ${
                               !descriptionExpanded ? 'line-clamp-2' : ''
                             }`}
                           >

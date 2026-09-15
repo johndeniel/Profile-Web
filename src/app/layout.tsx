@@ -7,32 +7,43 @@ import type { ReactNode } from 'react';
 import 'nextra-theme-docs/style.css';
 import '../styles/globals.css';
 
-const lora = localFont({
+const interTight = localFont({
   src: [
     {
-      path: '../assets/fonts/Lora-Regular.woff2',
-      weight: '400',
+      path: '../assets/fonts/InterTight-Variable.woff2',
+      weight: '100 900',
       style: 'normal',
     },
     {
-      path: '../assets/fonts/Lora-SemiBold.ttf',
-      weight: '600',
-      style: 'normal',
+      path: '../assets/fonts/InterTight-Italic-Variable.woff2',
+      weight: '100 900',
+      style: 'italic',
     },
-    { path: '../assets/fonts/Lora-Bold.ttf', weight: '700', style: 'normal' },
   ],
   variable: '--font-heading',
   display: 'swap',
 });
 
-const geist = localFont({
-  src: '../assets/fonts/Geist-Regular.woff2',
+const inter = localFont({
+  src: '../assets/fonts/Inter-Variable.woff2',
   variable: '--font-sans',
+  weight: '100 900',
   display: 'swap',
 });
 
-const geistMono = localFont({
-  src: '../assets/fonts/GeistMono-Regular.woff2',
+const ibmPlexMono = localFont({
+  src: [
+    {
+      path: '../assets/fonts/IBMPlexMono-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/IBMPlexMono-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+  ],
   variable: '--font-mono',
   display: 'swap',
 });
@@ -58,7 +69,7 @@ export default async function RootLayout({
       lang="en"
       dir="ltr"
       suppressHydrationWarning
-      className={`${lora.variable} ${geist.variable} ${geistMono.variable}`}
+      className={`${interTight.variable} ${inter.variable} ${ibmPlexMono.variable}`}
     >
       <Head />
       <body className="font-sans">
