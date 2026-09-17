@@ -14,9 +14,9 @@ export const mockPersonalInformation: PersonalInformation[] = [
     firstName: 'John Deniel',
     middleName: 'Santos',
     lastName: 'Dela Peña',
-    title: 'Junior Java Developer',
+    title: 'Software Developer',
     headline:
-      'Java Backend Developer | Financial Technology Spring Boot & REST APIs | Backend Systems',
+      'Passionate Software Developer | Crafting Innovative Solutions with Code | Building the Future, One Line at a Time',
     blobUrl:
       'https://ac7i1iecykk48zds.public.blob.vercel-storage.com/uploads/johndeniel-e84c3263-ofh07DeAj1vs5QLeGaOLL6Gf9XMbI0.png',
     blobId: 'avatar-1',
@@ -127,7 +127,7 @@ export const mockProfessionalExperience: ProfessionalExperience[] = [
     id: 'edadd3d8-e916-426f-9c25-c9d05c6bc67c',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
     company: 'Easycom Japan Philippines Inc.',
-    title: 'Java Software Developer',
+    title: 'Software Developer',
     location: 'Makati City, Metro Manila',
     type: 'CONTRACT',
     startDate: '2025-10-20T00:00:00',

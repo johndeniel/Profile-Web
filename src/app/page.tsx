@@ -49,7 +49,7 @@ export default function HomePage() {
         <div className="flex w-full flex-col gap-8 lg:max-w-xs lg:shrink-0">
           <Headline person={people[0]} />
           <SocialLinks links={mockSocialLinks} />
-          <TechStackList techs={mockTechStack} />
+          {/* <TechStackList techs={mockTechStack} /> */}
           <ProfessionalExperienceList
             experiences={mockProfessionalExperience}
           />
