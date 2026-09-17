@@ -81,9 +81,11 @@ export function LicenseCertificateList({
   const [selectedCert, setSelectedCert] = useState<LicenseCertificate | null>(
     null
   );
+
   const [previewCert, setPreviewCert] = useState<LicenseCertificate | null>(
     null
   );
+
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   // Top-level cards.
