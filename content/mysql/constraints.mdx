@@ -1,0 +1,95 @@
+---
+title: Constraints
+description: Every MySQL constraint, with column examples.
+sidebarTitle: Constraints
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Constraints
+
+Constraints enforce rules at write time. Bad rows are rejected before they reach the table.
+
+<Steps>
+
+### Identify each row
+
+Give every table one primary key. `t.id` identifies each row.
+
+### Require each fact
+
+Mark required columns `NOT NULL`. Give sensible `DEFAULT` values. Forbid duplicates with `UNIQUE`. Bound values with `CHECK`.
+
+### Link tables
+
+Point child rows at a real parent row with `FOREIGN KEY`. `line.ref_id` must match a `t.id`.
+
+</Steps>
+
+## Row identity
+
+| Constraint       | Rule                            | Example                             |
+| ---------------- | ------------------------------- | ----------------------------------- |
+| `PRIMARY KEY`    | One unique, non-null id per row | `id INT AUTO_INCREMENT PRIMARY KEY` |
+| `AUTO_INCREMENT` | MySQL assigns the next number   | `id INT AUTO_INCREMENT`             |
+
+<Callout type="info">
+  `PRIMARY KEY` is `UNIQUE` plus `NOT NULL`, one per table.
+</Callout>
+
+## Column rules
+
+| Constraint | Rule                          | Example                       |
+| ---------- | ----------------------------- | ----------------------------- |
+| `NOT NULL` | Value required                | `title VARCHAR(150) NOT NULL` |
+| `DEFAULT`  | Value used when omitted       | `qty INT DEFAULT 0`           |
+| `UNIQUE`   | No duplicates                 | `title VARCHAR(150) UNIQUE`   |
+| `CHECK`    | Value must satisfy expression | `CHECK (amount >= 0)`         |
+
+Combine them on one column. `title VARCHAR(150) NOT NULL UNIQUE` requires a title and forbids repeats. `qty INT NOT NULL DEFAULT 0 CHECK (qty >= 0)` always holds a valid count.
+
+## Table links
+
+| Constraint    | Rule                       | Example                         |
+| ------------- | -------------------------- | ------------------------------- |
+| `FOREIGN KEY` | Value must exist in parent | `line.ref_id REFERENCES t (id)` |
+
+Name the constraint so errors name it back:
+
+```sql filename="named foreign key" copy
+CONSTRAINT fk_line_ref FOREIGN KEY (ref_id)
+  REFERENCES t (id) ON DELETE CASCADE
+```
+
+`FOREIGN KEY` requires a matching `PRIMARY KEY` in the parent.
+
+<Tabs items={['CASCADE', 'RESTRICT', 'SET NULL']}>
+  <Tabs.Tab>
+    `ON DELETE CASCADE` removes child rows with the parent. Deleting a parent row deletes its lines.
+
+    ```sql filename="cascade" copy
+    REFERENCES t (id) ON DELETE CASCADE
+    ```
+
+    <Callout type="warning">
+      `CASCADE` deletes data beyond the row you named. Confirm the table name before running the `DELETE`.
+    </Callout>
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    `ON DELETE RESTRICT` blocks the delete while child rows exist. The parent survives.
+
+    ```sql filename="restrict" copy
+    REFERENCES t (id) ON DELETE RESTRICT
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    `ON DELETE SET NULL` keeps child rows and clears the link. The column must allow `NULL`.
+
+    ```sql filename="set null" copy
+    REFERENCES t (id) ON DELETE SET NULL
+    ```
+
+  </Tabs.Tab>
+</Tabs>

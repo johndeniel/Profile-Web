@@ -1,0 +1,103 @@
+---
+title: System Commands
+description: Every MySQL system command, with orientation examples.
+sidebarTitle: System Commands
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# System Commands
+
+System commands orient and configure the session. They inspect the server instead of querying rows.
+
+<Steps>
+
+### Learn the server
+
+Print the version. List databases. Check variables and status.
+
+### Navigate and configure
+
+Enter a database with `USE`. Tune the session with `SET`.
+
+### Ask for help
+
+Query `HELP` for syntax. It answers from inside the server.
+
+</Steps>
+
+## Inspecting
+
+Looks at tables and definitions without reading rows.
+
+```sql filename="inspecting" copy
+SHOW TABLES;
+
+DESCRIBE t;
+
+DESC t;
+```
+
+`DESCRIBE` and `DESC` are the same command. Both print one table's columns.
+
+## Navigating and Configuring
+
+Enters databases and tunes variables.
+
+```sql filename="navigating" copy
+USE mydb;
+
+SET SESSION sql_mode = 'STRICT_ALL_TABLES';
+
+SHOW SESSION VARIABLES LIKE 'sql_mode';
+```
+
+<Tabs items={['SESSION', 'GLOBAL']}>
+  <Tabs.Tab>
+    Current connection only. Vanishes on disconnect.
+
+    ```sql filename="session scope" copy
+    SET SESSION sql_mode = 'STRICT_ALL_TABLES';
+
+    SHOW SESSION VARIABLES LIKE 'sql_mode';
+    ```
+
+    Use for experiments and per-connection tuning.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    New connections from here on. Needs privileges.
+
+    ```sql filename="global scope" copy
+    SET GLOBAL max_connections = 200;
+
+    SHOW GLOBAL VARIABLES LIKE 'max_connections';
+    ```
+
+    Use for server-wide policy.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  `SET GLOBAL` touches new connections only. The current session keeps its old
+  values.
+</Callout>
+
+## Learning and Status
+
+Asks the server about itself.
+
+```sql filename="learning status" copy
+HELP 'contents';
+
+HELP 'SELECT';
+
+SHOW STATUS LIKE 'Threads_connected';
+
+SELECT VERSION();
+```
+
+<Callout type="info">
+  `HELP` answers from inside the server. No manual lookup leaves the terminal.
+</Callout>

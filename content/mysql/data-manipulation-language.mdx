@@ -1,0 +1,102 @@
+---
+title: Data Manipulation Language
+description: Every MySQL DML command, with row examples.
+sidebarTitle: Data Manipulation Language
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Data Manipulation Language
+
+DML modifies rows, not structures. Four commands cover it.
+
+<Steps>
+
+### Preview first
+
+Run `SELECT` with the intended `WHERE`. Confirm exactly the target rows return.
+
+### Write with WHERE
+
+Run the `UPDATE` or `DELETE` with the same `WHERE`. No `WHERE` means every row.
+
+### Confirm after
+
+Run `SELECT` or `COUNT(*)` again. The change should match the preview.
+
+</Steps>
+
+## INSERT
+
+Adds rows. Name the columns so added or reordered columns never break the statement.
+
+```sql filename="insert" copy
+INSERT INTO t (title, amount, qty) VALUES
+  ('Widget A', 79.00, 25),
+  ('Widget B', 39.50, 60);
+```
+
+<Callout type="info">
+  Explicit column lists survive schema changes. Bare `VALUES` lists do not.
+</Callout>
+
+## UPDATE
+
+Changes rows matching `WHERE`.
+
+```sql filename="update" copy
+SELECT * FROM t WHERE id = 2;
+
+UPDATE t SET amount = 35.00, qty = 45 WHERE id = 2;
+```
+
+<Callout type="warning">
+  `UPDATE` and `DELETE` without `WHERE` affect every row. Preview with `SELECT`
+  using the same `WHERE` first.
+</Callout>
+
+## DELETE
+
+Removes rows matching `WHERE`.
+
+```sql filename="delete" copy
+SELECT * FROM t WHERE id = 2;
+
+DELETE FROM t WHERE id = 2;
+
+SELECT COUNT(*) FROM t;
+```
+
+## REPLACE
+
+Inserts a row, or replaces it on duplicate key.
+
+```sql filename="replace" copy
+REPLACE INTO t (id, title, amount, qty) VALUES (2, 'Widget B', 35.00, 60);
+```
+
+`INSERT` fails on duplicate key. `REPLACE` deletes the old row and inserts the new one.
+
+<Tabs items={['REPLACE', 'ON DUPLICATE KEY UPDATE']}>
+  <Tabs.Tab>
+    Full-row replacement. Omitted columns fall back to defaults.
+
+    ```sql filename="upsert replace" copy
+    REPLACE INTO t (id, title, amount, qty) VALUES (2, 'Widget B', 35.00, 60);
+    ```
+
+    Use when the new row carries every value.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Partial update on conflict. Untouched columns keep their values.
+
+    ```sql filename="upsert update" copy
+    INSERT INTO t (id, title, amount, qty) VALUES (2, 'Widget B', 35.00, 60)
+    ON DUPLICATE KEY UPDATE amount = VALUES(amount), qty = VALUES(qty);
+    ```
+
+    Use when only some columns change.
+
+  </Tabs.Tab>
+</Tabs>

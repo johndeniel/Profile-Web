@@ -1,0 +1,127 @@
+---
+title: Date and Time Functions
+description: Every MySQL date and time function, with value examples.
+sidebarTitle: Date and Time Functions
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Date and Time Functions
+
+Date and time functions read and shift calendar values. Each takes a date or time and returns a part, a shifted value, or a gap.
+
+<Steps>
+
+### Get now
+
+Capture the current moment with `NOW`, `CURRENT_DATE`, or `CURRENT_TIME`.
+
+### Extract or shift
+
+Pull parts with `YEAR` or `MONTH`. Move forward and back with `DATE_ADD` and `DATE_SUB`.
+
+### Measure gaps
+
+Count days with `DATEDIFF`. Count any unit with `TIMESTAMPDIFF`.
+
+</Steps>
+
+<Callout type="info">
+  `NOW()` is fixed per statement. Every row in one query sees the same moment.
+</Callout>
+
+## Current moment
+
+Returns the present date, time, or both.
+
+```sql filename="now" copy
+SELECT NOW(), CURRENT_TIMESTAMP;
+
+SELECT CURRENT_DATE, CURRENT_TIME;
+```
+
+`NOW()` and `CURRENT_TIMESTAMP` return the datetime. `CURRENT_DATE` returns the date. `CURRENT_TIME` returns the time.
+
+## Extracting parts
+
+Pulls one part out of a date or datetime.
+
+```sql filename="extracting" copy
+SELECT DATE(created_at), TIME(created_at) FROM t;
+
+SELECT YEAR(created_at), MONTH(created_at), DAY(created_at) FROM t;
+
+SELECT HOUR(created_at), MINUTE(created_at), SECOND(created_at) FROM t;
+```
+
+`DATE` and `TIME` split a datetime. The rest return one numbered part each.
+
+## Shifting dates
+
+Moves a date forward and back by an interval.
+
+```sql filename="shifting" copy
+SELECT DATE_ADD('2026-01-10', INTERVAL 7 DAY);
+
+SELECT DATE_SUB('2026-01-10', INTERVAL 1 MONTH);
+```
+
+## Measuring gaps
+
+Counts the distance between two dates.
+
+```sql filename="gaps" copy
+SELECT DATEDIFF('2026-01-20', '2026-01-10');
+
+SELECT TIMESTAMPDIFF(DAY, '2026-01-10', '2026-01-20');
+
+SELECT TIMESTAMPDIFF(HOUR, '2026-01-10 08:00:00', '2026-01-10 20:00:00');
+```
+
+`DATEDIFF(a, b)` is a−b in days. `TIMESTAMPDIFF(unit, start, end)` is end−start in the given unit.
+
+<Tabs items={['DATEDIFF', 'TIMESTAMPDIFF']}>
+  <Tabs.Tab>
+    Counts whole days between two dates. Time parts ignored.
+
+    ```sql filename="datediff demo" copy
+    SELECT DATEDIFF('2026-01-20', '2026-01-10');
+    ```
+
+    Returns 10. Use for calendar-day gaps.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Counts the gap in any unit, from years down to microseconds.
+
+    ```sql filename="timestampdiff demo" copy
+    SELECT TIMESTAMPDIFF(HOUR, '2026-01-10 08:00:00', '2026-01-10 20:00:00');
+    ```
+
+    Returns 12. Use when days are the wrong unit.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  `DATEDIFF` ignores time parts. Times hours apart on the same day still return
+  0.
+</Callout>
+
+## Naming days
+
+Returns the weekday and month names.
+
+```sql filename="naming" copy
+SELECT DAYNAME('2026-01-10'), MONTHNAME('2026-01-10');
+```
+
+## Month edges
+
+Returns the last day of the value's month.
+
+```sql filename="month edge" copy
+SELECT LAST_DAY('2026-02-10');
+```
+
+Returns 2026-02-28. Use for month-end boundaries and reports.

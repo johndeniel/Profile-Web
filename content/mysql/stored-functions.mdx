@@ -1,0 +1,132 @@
+---
+title: Stored Functions
+description: Every MySQL stored function element, with routine examples.
+sidebarTitle: Stored Functions
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Stored Functions
+
+A function stores logic that returns exactly one value. Call it inside SQL like any built-in function.
+
+<Steps>
+
+### Declare the signature
+
+Name the function. List parameters. State the return type with `RETURNS`.
+
+### Write the logic
+
+Declare variables. Compute the result. Hand it back with `RETURN`.
+
+### Call it from SQL
+
+Use it in `SELECT`, `WHERE`, or `SET` like any function.
+
+</Steps>
+
+## Function Parameters
+
+Lists inputs. All parameters read inward. Results leave through `RETURN`, never through parameters.
+
+```sql filename="parameters" copy
+DELIMITER //
+
+CREATE FUNCTION tax(amount DECIMAL(10,2)) RETURNS DECIMAL(10,2)
+  DETERMINISTIC
+BEGIN
+  RETURN amount * 0.12;
+END //
+
+DELIMITER ;
+```
+
+## Return Values
+
+Hands back exactly one value. Every path through the body must reach `RETURN`.
+
+```sql filename="return" copy
+SELECT tax(amount) FROM t;
+
+SELECT * FROM t WHERE tax(amount) > 5.00;
+```
+
+## Local Variables
+
+Holds working values inside the body.
+
+```sql filename="variables" copy
+DELIMITER //
+
+CREATE FUNCTION grade(qty INT) RETURNS VARCHAR(10)
+  DETERMINISTIC
+BEGIN
+  DECLARE g VARCHAR(10) DEFAULT 'many';
+  IF qty = 0 THEN
+    SET g = 'empty';
+  END IF;
+  RETURN g;
+END //
+
+DELIMITER ;
+```
+
+## Function Logic
+
+Branches and loops work as in procedures. Keep functions free of result sets.
+
+```sql filename="logic" copy
+IF qty < 0 THEN
+  RETURN 'invalid';
+ELSEIF qty = 0 THEN
+  RETURN 'empty';
+ELSE
+  RETURN 'available';
+END IF;
+```
+
+## Procedure or Function
+
+<Tabs items={['Procedure', 'Function']}>
+  <Tabs.Tab>
+    Runs steps. Called with `CALL`. Returns result sets and `OUT` values.
+
+    ```sql filename="procedure call" copy
+    CALL top_rows(50.00, @total);
+    ```
+
+    Use for multi-step jobs and side effects.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Computes one value. Called inside SQL. Never returns result sets.
+
+    ```sql filename="function call" copy
+    SELECT tax(amount) FROM t;
+    ```
+
+    Use for reusable calculations in queries.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  Creating functions may need the `log_bin_trust_function_creators` privilege.
+  Without it, creation fails on servers with binary logging.
+</Callout>
+
+<Callout type="info">
+  Flag side-effect-free functions `DETERMINISTIC`. It helps replication and the
+  optimizer trust the result.
+</Callout>
+
+## Function Management
+
+Lists and removes functions.
+
+```sql filename="management" copy
+SHOW FUNCTION STATUS WHERE Db = 'mydb';
+
+DROP FUNCTION IF EXISTS tax;
+```

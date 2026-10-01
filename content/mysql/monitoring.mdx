@@ -1,0 +1,110 @@
+---
+title: Monitoring
+description: Every MySQL monitoring source, with slowdown-finding examples.
+sidebarTitle: Monitoring
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Monitoring
+
+Monitoring watches server health while it runs. Counters show load, logs show history, variables show configuration.
+
+<Steps>
+
+### Check live counters
+
+Read status variables. Spot climbing threads and slow queries.
+
+### Read the slow log
+
+Find the worst statements. Fix them with `EXPLAIN`.
+
+### Track over time
+
+Graph key metrics. Alert before limits bite.
+
+</Steps>
+
+## Status and System Variables
+
+Live numbers and live settings.
+
+```sql filename="variables" copy
+SHOW STATUS LIKE 'Threads_connected';
+
+SHOW STATUS LIKE 'Slow_queries';
+
+SHOW VARIABLES LIKE 'max_connections';
+```
+
+```sql filename="sessions" copy
+SELECT ID, USER, HOST, DB, COMMAND, TIME, STATE
+FROM INFORMATION_SCHEMA.PROCESSLIST;
+```
+
+`PROCESSLIST` lists live sessions with current work. Sort by `TIME` to find the stuck ones.
+
+## Logs
+
+Four logs, four questions answered.
+
+| Log               | Answers                  |
+| ----------------- | ------------------------ |
+| Error log         | Why did the server fail? |
+| General query log | What ran, in full?       |
+| Slow query log    | What ran too long?       |
+| Binary log        | What changed, in order?  |
+
+```sql filename="logs" copy
+SHOW VARIABLES LIKE 'log_error';
+
+SHOW VARIABLES LIKE 'slow_query_log';
+```
+
+<Tabs items={['Slow query log', 'Performance Schema']}>
+  <Tabs.Tab>
+    File or table of statements past the time threshold.
+
+    ```sql filename="slow log" copy
+    SET GLOBAL slow_query_log = ON;
+
+    SET GLOBAL long_query_time = 1;
+    ```
+
+    Use for worst-offender hunts.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Queryable tables of waits, stages, and statements.
+
+    ```sql filename="performance schema" copy
+    SELECT * FROM performance_schema.events_statements_summary_by_digest
+    ORDER BY SUM_TIMER_WAIT DESC LIMIT 5;
+    ```
+
+    Use for aggregated, always-on analysis.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  The general query log on live servers kills performance. It records
+  everything.
+</Callout>
+
+## Metrics That Matter
+
+Watch a short list daily. Alert on trends, not spikes.
+
+```sql filename="metrics" copy
+SHOW STATUS LIKE 'Threads_connected';
+
+SHOW STATUS LIKE 'Slow_queries';
+
+SHOW STATUS LIKE 'Innodb_buffer_pool_read_requests';
+```
+
+<Callout type="info">
+  Set `log_output = 'TABLE'` to query slow-log entries with plain SQL.
+</Callout>

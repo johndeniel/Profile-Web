@@ -1,0 +1,85 @@
+---
+title: Character Sets and Collations
+description: Every MySQL character set and collation rule, with encoding examples.
+sidebarTitle: Character Sets and Collations
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Character Sets and Collations
+
+Character sets decide which symbols a column can store. Collations decide how those symbols compare and sort.
+
+<Steps>
+
+### Set the character set
+
+Choose `utf8mb4` at server, database, table, and column level.
+
+### Set the collation
+
+Pick comparison rules per column. Suffixes carry the meaning.
+
+### Set the connection
+
+Match the client charset to the storage charset. Mixed settings corrupt text.
+
+</Steps>
+
+```sql filename="charset" copy
+CREATE DATABASE mydb CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+SHOW CHARACTER SET;
+
+SHOW COLLATION LIKE 'utf8mb4%';
+```
+
+<Callout type="warning">
+  MySQL `utf8` is not real UTF-8. It stores three bytes maximum and breaks
+  emoji. Always use `utf8mb4`.
+</Callout>
+
+## Collations
+
+Suffixes encode comparison rules.
+
+| Suffix | Meaning                            |
+| ------ | ---------------------------------- |
+| `_ci`  | Case-insensitive compare and sort. |
+| `_cs`  | Case-sensitive compare and sort.   |
+| `_bin` | Binary compare by code point.      |
+
+```sql filename="collation" copy
+CREATE TABLE t (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
+);
+```
+
+<Tabs items={['Case-insensitive (_ci)', 'Binary (_bin)']}>
+  <Tabs.Tab>
+    Ignores case and accents by default. User-facing search behavior.
+
+    ```sql filename="ci compare" copy
+    SELECT * FROM t WHERE title = 'widget';
+    ```
+
+    Matches `Widget`, `WIDGET`, and accented variants under `utf8mb4_0900_ai_ci`.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Compares raw code points. Exact matching only.
+
+    ```sql filename="bin compare" copy
+    SELECT * FROM t WHERE title COLLATE utf8mb4_bin = 'Widget';
+    ```
+
+    Use for codes, tokens, and identifiers where case matters.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+  `_ci` collations ignore case and accents by default. Specify `_bin` or `_cs`
+  when exactness matters.
+</Callout>

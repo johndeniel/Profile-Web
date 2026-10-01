@@ -1,0 +1,122 @@
+---
+title: Aggregate Functions
+description: Every MySQL aggregate function, with row examples.
+sidebarTitle: Aggregate Functions
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Aggregate Functions
+
+Aggregates collapse many rows into one value. Pair them with `GROUP BY` for one value per group.
+
+<Steps>
+
+### Filter rows
+
+Keep wanted rows with `WHERE`. Aggregates never see the rest.
+
+### Group optionally
+
+Add `GROUP BY` for per-group values. Skip it for one value over all rows.
+
+### Aggregate
+
+Apply one function. The result has one row per group, or one row total.
+
+</Steps>
+
+## COUNT
+
+Counts rows. Three forms, three meanings.
+
+```sql filename="count" copy
+SELECT COUNT(*) FROM t;
+
+SELECT COUNT(qty) FROM t;
+
+SELECT COUNT(DISTINCT qty) FROM t;
+```
+
+`COUNT(*)` counts rows. `COUNT(col)` counts non-`NULL` values. `COUNT(DISTINCT col)` counts distinct non-`NULL` values.
+
+<Tabs items={['COUNT(*)', 'COUNT(col)', 'COUNT(DISTINCT col)']}>
+  <Tabs.Tab>
+    Counts rows, `NULL`s included.
+
+    ```sql filename="count rows" copy
+    SELECT COUNT(*) AS rows FROM t;
+    ```
+
+    Use for row totals.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Counts non-`NULL` values in one column.
+
+    ```sql filename="count values" copy
+    SELECT COUNT(qty) AS qtys FROM t;
+    ```
+
+    Use for filled-value totals.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Counts distinct non-`NULL` values in one column.
+
+    ```sql filename="count distinct" copy
+    SELECT COUNT(DISTINCT qty) AS levels FROM t;
+    ```
+
+    Use for variety totals.
+
+  </Tabs.Tab>
+</Tabs>
+
+## SUM
+
+Totals a numeric column. Skips `NULL`s.
+
+```sql filename="sum" copy
+SELECT SUM(amount) AS total FROM t;
+
+SELECT SUM(amount) AS total FROM t WHERE qty > 0;
+```
+
+## AVG
+
+Means a numeric column. Skips `NULL`s.
+
+```sql filename="avg" copy
+SELECT AVG(amount) AS average FROM t;
+```
+
+<Callout type="warning">
+  Every aggregate except `COUNT(*)` skips `NULL`s. Sparse columns skew `AVG`
+  upward by shrinking the divisor.
+</Callout>
+
+## MIN
+
+Smallest value. Works on numbers, strings, and dates.
+
+```sql filename="min" copy
+SELECT MIN(amount) AS smallest FROM t;
+
+SELECT MIN(title) AS first_title FROM t;
+```
+
+## MAX
+
+Largest value. Works on numbers, strings, and dates.
+
+```sql filename="max" copy
+SELECT MAX(amount) AS largest FROM t;
+
+SELECT MAX(title) AS last_title FROM t;
+```
+
+<Callout type="info">
+  `MIN` and `MAX` work on strings and dates, not just numbers. They return the
+  first and last in sort order.
+</Callout>

@@ -1,0 +1,82 @@
+---
+title: Performance Tuning
+description: Every MySQL performance tuning lever, with sizing examples.
+sidebarTitle: Performance Tuning
+---
+
+import { Callout, Steps } from 'nextra/components';
+
+# Performance Tuning
+
+Performance tuning removes bottlenecks in fixed order: queries first, memory second, connections last. Guessing wastes the whole exercise.
+
+<Steps>
+
+### Fix the queries
+
+Tune statements with `EXPLAIN`. Index the lookups. Nothing else matters first.
+
+### Size the buffer pool
+
+Give InnoDB most of RAM. Measure the hit rate after.
+
+### Cap connections
+
+Limit concurrency to what memory allows. Queue the rest outside.
+
+</Steps>
+
+| Knob                      | Rule of thumb                                 |
+| ------------------------- | --------------------------------------------- |
+| Slow queries              | Fix with `EXPLAIN` before touching config.    |
+| Missing indexes           | Add for join and filter columns.              |
+| `innodb_buffer_pool_size` | Roughly 70 percent of RAM on dedicated hosts. |
+| `max_connections`         | Memory math first, headroom always.           |
+| `long_query_time`         | Low enough to catch real offenders.           |
+
+```sql filename="buffer pool" copy
+SHOW STATUS LIKE 'Innodb_buffer_pool_read_requests';
+
+SHOW STATUS LIKE 'Innodb_buffer_pool_reads';
+```
+
+Reads served from memory over total reads is the hit rate. Near 100 is healthy.
+
+## Query and Index Performance
+
+Owned in depth by the Query Optimization and Indexes pages. Tune there, measure here.
+
+```sql filename="query check" copy
+EXPLAIN ANALYZE SELECT * FROM t WHERE qty > 0;
+```
+
+## Memory and Connection Tuning
+
+Sizes the two hungriest resources.
+
+```sql filename="memory connections" copy
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';
+
+SHOW VARIABLES LIKE 'max_connections';
+
+SHOW STATUS LIKE 'Threads_connected';
+```
+
+<Callout type="warning">
+  Raising limits without memory math causes swapping. Swapping is slower than
+  any queue it avoids.
+</Callout>
+
+## Server Configuration and Resources
+
+Applies the numbers and watches the machine.
+
+```sql filename="config" copy
+SET GLOBAL max_connections = 200;
+
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';
+```
+
+<Callout type="info">
+  The query cache was removed in MySQL 8.0. Ignore old guides that tune it.
+</Callout>

@@ -1,0 +1,97 @@
+---
+title: Conversion Functions
+description: Every MySQL conversion function, with value examples.
+sidebarTitle: Conversion Functions
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Conversion Functions
+
+Conversion functions retype values without changing them. Each takes a value and returns it under a new type.
+
+<Steps>
+
+### Pick the source
+
+Name the value to convert. A literal, a column, or an expression.
+
+### Pick the target type
+
+Choose from the valid targets: `CHAR`, `SIGNED`, `UNSIGNED`, `DECIMAL`, `DATE`, `DATETIME`, `TIME`, `JSON`, `BINARY`.
+
+### Cast and check
+
+Run the cast. Read the result back. Failed conversions warn instead of erroring.
+
+</Steps>
+
+<Callout type="info">
+  MySQL has no `VARCHAR` cast target. Use `CHAR` instead: `CAST(title AS CHAR)`.
+</Callout>
+
+## CAST
+
+Standard SQL form. Converts between compatible types.
+
+```sql filename="cast" copy
+SELECT CAST('42' AS UNSIGNED);
+
+SELECT CAST(amount AS CHAR) FROM t;
+
+SELECT CAST('2026-01-10' AS DATE);
+```
+
+## CONVERT
+
+MySQL form. Same result as `CAST` for type conversions, plus a charset form.
+
+```sql filename="convert" copy
+SELECT CONVERT('42', UNSIGNED);
+
+SELECT CONVERT(title USING utf8mb4) FROM t;
+```
+
+`CONVERT(x, type)` matches `CAST(x AS type)`. `CONVERT(x USING charset)` transcodes text between character sets.
+
+<Tabs items={['CAST', 'CONVERT']}>
+  <Tabs.Tab>
+    Standard SQL. Works across database systems.
+
+    ```sql filename="cast form" copy
+    SELECT CAST(amount AS CHAR) FROM t;
+    ```
+
+    Use for portable queries.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    MySQL form. Adds charset transcoding.
+
+    ```sql filename="convert form" copy
+    SELECT CONVERT(amount, CHAR) FROM t;
+    ```
+
+    Use inside MySQL-only code, or when transcoding charsets.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  Failed conversions don't error. Bad strings become `0` or `NULL` with a
+  warning only. Check results with `SHOW WARNINGS`.
+</Callout>
+
+## BINARY operator
+
+Shorthand for `CAST(x AS BINARY)`. Forces byte-wise comparison.
+
+```sql filename="binary operator" copy
+SELECT BINARY title FROM t;
+
+SELECT * FROM t WHERE BINARY title = 'Widget';
+```
+
+Byte comparison is case-sensitive. `'Widget'` stops matching `'widget'`.
+
+This is an operator, not the `BINARY(n)` column type from Data Types.

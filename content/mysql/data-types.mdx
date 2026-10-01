@@ -1,0 +1,149 @@
+---
+title: Data Types
+description: Every MySQL data type, with ranges and column examples.
+sidebarTitle: Data Types
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Data Types
+
+Each column needs a type. Choose the smallest type that holds the data. It saves disk, speeds queries, and blocks bad values.
+
+<Steps>
+
+### Measure the maximum
+
+Find the largest value the column will ever hold. Counts rarely exceed thousands. Amounts rarely exceed millions.
+
+### Decide exact or approximate
+
+Money and counts must be exact. Measurements and ratings can be approximate. Exact uses `INT` or `DECIMAL`. Approximate uses `FLOAT` or `DOUBLE`.
+
+### Take the smallest that fits
+
+A smaller type uses less disk and runs faster. Do not use `BIGINT` for small counts. Do not use `TEXT` for a name.
+
+</Steps>
+
+## Numeric
+
+<Tabs items={['Integers', 'Unsigned', 'Exact decimals', 'Approximate']}>
+  <Tabs.Tab>
+    | Type        | Stores               | Use               |
+    | ----------- | -------------------- | ----------------- |
+    | `TINYINT`   | -128 to 127, 1 byte  | Flags             |
+    | `SMALLINT`  | ±32k, 2 bytes        | Small quantities  |
+    | `MEDIUMINT` | ±8M, 3 bytes         | Medium quantities |
+    | `INT`       | ±2B, 4 bytes         | Ids, quantities   |
+    | `BIGINT`    | Large range, 8 bytes | Large counters    |
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    | Type                 | Stores                        | Use               |
+    | -------------------- | ----------------------------- | ----------------- |
+    | `TINYINT UNSIGNED`   | 0 to 255, 1 byte              | Flags             |
+    | `SMALLINT UNSIGNED`  | 0 to 65,535, 2 bytes          | Small quantities  |
+    | `MEDIUMINT UNSIGNED` | 0 to 16,777,215, 3 bytes      | Medium quantities |
+    | `INT UNSIGNED`       | 0 to 4,294,967,295, 4 bytes   | Ids, quantities   |
+    | `BIGINT UNSIGNED`    | 0 to 18.4 quintillion, 8 bytes | Large counters   |
+
+    `UNSIGNED` forbids negatives and roughly doubles the positive max.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    | Type                 | Stores                        | Use                         |
+    | -------------------- | ----------------------------- | --------------------------- |
+    | `DECIMAL(M,D)`       | Exact, e.g. `DECIMAL(10,2)`   | Amounts — money stays exact |
+    | `DECIMAL(M,D) UNSIGNED` | Exact, 0 to max, no negatives | Nonnegative amounts      |
+
+    `M` is total digits. `D` is digits after the point. `DECIMAL(10,2)` holds up to 99999999.99.
+
+    `UNSIGNED` also works here but is deprecated since 8.0.17 — prefer `CHECK (amount >= 0)`.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    | Type             | Stores                          | Use                      |
+    | ---------------- | ------------------------------- | ------------------------ |
+    | `FLOAT`          | Approximate, 4 bytes            | Ratings                  |
+    | `DOUBLE`         | Approximate, 8 bytes            | Precise measurements     |
+    | `FLOAT UNSIGNED` | Approximate, 0 to max, 4 bytes  | Nonnegative ratings      |
+    | `DOUBLE UNSIGNED` | Approximate, 0 to max, 8 bytes | Nonnegative measurements |
+
+    <Callout type="warning">
+      Never use `FLOAT` or `DOUBLE` for money. Approximate types round cents. Use `DECIMAL` for amounts. `UNSIGNED` on these types is deprecated since 8.0.17 — prefer `CHECK`.
+    </Callout>
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+  `INT UNSIGNED` doubles the positive range. Use it for ids and counters that
+  never go negative.
+</Callout>
+
+## String
+
+| Type         | Stores          | Use                   |
+| ------------ | --------------- | --------------------- |
+| `CHAR(n)`    | Fixed length    | Codes like `PH`, `US` |
+| `VARCHAR(n)` | Up to `n` chars | `title VARCHAR(150)`  |
+| `TINYTEXT`   | Up to 255 chars | Short notes           |
+| `TEXT`       | Up to 64KB      | Descriptions          |
+| `MEDIUMTEXT` | Up to 16MB      | Long descriptions     |
+| `LONGTEXT`   | Up to 4GB       | Documents             |
+
+`VARCHAR(150)` covers most titles. Move to `TEXT` only when content has no clear length limit.
+
+## Date and Time
+
+| Type        | Stores                         | Use              |
+| ----------- | ------------------------------ | ---------------- |
+| `DATE`      | `YYYY-MM-DD`                   | Event dates      |
+| `TIME`      | `HH:MM:SS`                     | Durations, hours |
+| `DATETIME`  | Date and time, stored as given | Schedules, logs  |
+| `TIMESTAMP` | Date and time, stored as UTC   | Creation stamps  |
+| `YEAR`      | Year, 1 byte                   | Model year       |
+
+`DATE` fits calendar days. `TIMESTAMP` fits audit fields.
+
+## Binary
+
+| Type           | Stores          | Use                 |
+| -------------- | --------------- | ------------------- |
+| `BINARY(n)`    | Fixed bytes     | Hashes              |
+| `VARBINARY(n)` | Variable bytes  | Hashes, tokens      |
+| `TINYBLOB`     | Up to 255 bytes | Short binary values |
+| `BLOB`         | Up to 64KB      | File bytes          |
+| `MEDIUMBLOB`   | Up to 16MB      | Photos              |
+| `LONGBLOB`     | Up to 4GB       | Large files         |
+
+Store files on disk and keep the path in MySQL.
+
+## JSON
+
+| Type   | Stores                         | Use                                |
+| ------ | ------------------------------ | ---------------------------------- |
+| `JSON` | Structured document, validated | `attributes` for variants, options |
+
+```sql filename="json" copy
+attributes JSON  -- {"color": "black"}
+```
+
+## Spatial
+
+| Type         | Stores           | Use       |
+| ------------ | ---------------- | --------- |
+| `POINT`      | One location     | Locations |
+| `LINESTRING` | Connected points | Routes    |
+| `POLYGON`    | Closed area      | Areas     |
+
+Use only for location queries.
+
+## Other
+
+| Type   | Stores                          | Use                                |
+| ------ | ------------------------------- | ---------------------------------- |
+| `ENUM` | One value from a list           | `status ENUM('active','archived')` |
+| `SET`  | Zero or more values from a list | Labels                             |
+| `BIT`  | Bit values, e.g. `BIT(1)`       | Flags                              |

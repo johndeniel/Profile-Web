@@ -1,0 +1,98 @@
+---
+title: Events
+description: Every MySQL event form, with scheduled examples.
+sidebarTitle: Events
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Events
+
+An event runs SQL on a schedule inside the database. Define the body once. MySQL fires it on time.
+
+<Steps>
+
+### Enable the scheduler
+
+Check `event_scheduler`. Turn it on when the workload needs timed jobs.
+
+### Define the body
+
+Write the statements the event runs. Keep them idempotent for repeats.
+
+### Verify the schedule
+
+Inspect status with `SHOW EVENTS`. Confirm next run times.
+
+</Steps>
+
+<Callout type="warning">
+  The event scheduler ships OFF. Events never fire until `SET GLOBAL
+  event_scheduler = ON`.
+</Callout>
+
+## One-Time Events
+
+Runs once at a fixed moment.
+
+```sql filename="one time" copy
+CREATE EVENT purge_once
+ON SCHEDULE AT '2026-02-01 03:00:00'
+DO
+  DELETE FROM t_log WHERE created_at < '2025-01-01';
+```
+
+One-time events drop themselves after firing. Add `ON COMPLETION PRESERVE` to keep them listed.
+
+## Recurring Events
+
+Repeats on an interval, with optional start and end bounds.
+
+```sql filename="recurring" copy
+CREATE EVENT purge_nightly
+ON SCHEDULE EVERY 1 DAY
+STARTS '2026-02-01 03:00:00'
+DO
+  DELETE FROM t_log WHERE created_at < NOW() - INTERVAL 1 YEAR;
+```
+
+<Tabs items={['AT', 'EVERY']}>
+  <Tabs.Tab>
+    Fires once at the given moment, then never again.
+
+    ```sql filename="at form" copy
+    ON SCHEDULE AT '2026-02-01 03:00:00'
+    ```
+
+    Use for migrations and one-off cleanups.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Fires on a repeating interval until dropped or ended.
+
+    ```sql filename="every form" copy
+    ON SCHEDULE EVERY 1 HOUR STARTS NOW() ENDS NOW() + INTERVAL 7 DAY
+    ```
+
+    Use for retention jobs and rollups.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Event Management
+
+Alters, lists, and removes events.
+
+```sql filename="management" copy
+SHOW EVENTS LIKE 'purge%';
+
+ALTER EVENT purge_nightly DISABLE;
+
+ALTER EVENT purge_nightly ENABLE;
+
+DROP EVENT IF EXISTS purge_once;
+```
+
+<Callout type="info">
+  Events run as their definer. Dropped definers leave orphaned schedules behind.
+</Callout>

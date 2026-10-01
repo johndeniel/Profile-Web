@@ -1,0 +1,111 @@
+---
+title: Data Control Language
+description: Every MySQL DCL command, with access examples.
+sidebarTitle: Data Control Language
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Data Control Language
+
+DCL controls who can do what. It changes permissions, not data. Names below are placeholders.
+
+<Steps>
+
+### Create the user
+
+Make an account with no rights. Rights come separately.
+
+### Grant least privilege
+
+Give only the privileges the job needs, on the smallest scope that works.
+
+### Verify
+
+Inspect the result with `SHOW GRANTS`. Remove what the job outgrows with `REVOKE`.
+
+</Steps>
+
+## GRANT
+
+Gives a privilege on an object to a user.
+
+```sql filename="grant" copy
+CREATE USER 'reader'@'localhost' IDENTIFIED BY 'secret';
+
+GRANT SELECT ON mydb.t TO 'reader'@'localhost';
+```
+
+## REVOKE
+
+Takes a privilege back. Same shape as `GRANT`.
+
+```sql filename="revoke" copy
+REVOKE DELETE ON mydb.* FROM 'reader'@'localhost';
+```
+
+## Privileges
+
+| Privilege        | Allows                        |
+| ---------------- | ----------------------------- |
+| `SELECT`         | Read rows                     |
+| `INSERT`         | Add rows                      |
+| `UPDATE`         | Change rows                   |
+| `DELETE`         | Remove rows                   |
+| `CREATE`         | Make databases and tables     |
+| `DROP`           | Delete databases and tables   |
+| `ALL PRIVILEGES` | Everything at the given scope |
+
+<Callout type="warning">
+  `ALL PRIVILEGES` and `WITH GRANT OPTION` hand over the keys. Grant them to
+  almost nobody.
+</Callout>
+
+## Scope
+
+Privileges apply at a level. Smaller scope means smaller damage.
+
+<Tabs items={['Global', 'Database', 'Table']}>
+  <Tabs.Tab>
+    Every database. Reserve for administrators.
+
+    ```sql filename="global scope" copy
+    GRANT SELECT ON *.* TO 'reader'@'localhost';
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    One database, all its tables. The usual choice for app accounts.
+
+    ```sql filename="database scope" copy
+    GRANT SELECT, INSERT, UPDATE ON mydb.* TO 'reader'@'localhost';
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    One table. The tightest grant for a single job.
+
+    ```sql filename="table scope" copy
+    GRANT SELECT ON mydb.t TO 'reader'@'localhost';
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## Permissions
+
+Read current rights. Bundle repeated rights into roles.
+
+```sql filename="permissions" copy
+SHOW GRANTS FOR 'reader'@'localhost';
+
+CREATE ROLE 'analyst';
+
+GRANT SELECT ON mydb.* TO 'analyst';
+
+GRANT 'analyst' TO 'reader'@'localhost';
+```
+
+<Callout type="info">
+  `GRANT` and `REVOKE` apply immediately. No restart, no extra step.
+</Callout>

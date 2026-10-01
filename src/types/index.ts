@@ -92,3 +92,11 @@ export interface LicenseCertificate {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Article {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  tag: string;
+}

@@ -1,0 +1,114 @@
+---
+title: Administration
+description: Every MySQL administration task, with server lifecycle examples.
+sidebarTitle: Administration
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Administration
+
+Administration runs the server itself: configure, start, maintain, secure, and watch. Query knowledge from earlier pages; lifecycle lives here.
+
+<Steps>
+
+### Configure the server
+
+Write `my.cnf` groups. Verify compiled defaults before first start.
+
+### Initialize and start
+
+Create the data directory. Start the service. Confirm it answers.
+
+### Secure and maintain
+
+Lock down accounts. Rotate logs. Check tables on schedule.
+
+</Steps>
+
+## Server Configuration
+
+Files set policy. Runtime commands adjust the living server.
+
+```sql filename="config" copy
+SHOW VARIABLES LIKE 'datadir';
+
+SHOW VARIABLES LIKE 'max_connections';
+```
+
+```ini filename="my.cnf" copy
+[mysqld]
+max_connections = 200
+innodb_buffer_pool_size = 2G
+```
+
+<Tabs items={['SET GLOBAL', 'SET PERSIST']}>
+  <Tabs.Tab>
+    Changes the running server. Lost on restart.
+
+    ```sql filename="set global" copy
+    SET GLOBAL max_connections = 200;
+    ```
+
+    Use for experiments and incident response.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Changes the running server and writes `mysqld-auto.cnf`. Survives restarts.
+
+    ```sql filename="set persist" copy
+    SET PERSIST max_connections = 200;
+    ```
+
+    Use for intended permanent changes.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  `PERSIST` silently overrides `my.cnf` on every future start. Clear stale
+  entries with `RESET PERSIST`.
+</Callout>
+
+<Callout type="info">
+  `mysqld --verbose --help` prints compiled defaults. Read them before
+  overriding.
+</Callout>
+
+## Server Startup and Shutdown
+
+Brings the service up and down cleanly.
+
+```bash filename="lifecycle" copy
+mysqld --initialize --datadir=/var/lib/mysql
+systemctl start mysql
+mysqladmin -u root -p shutdown
+```
+
+## User, Database, and Table Maintenance
+
+Keeps accounts, containers, and tables healthy. Details live on their own pages.
+
+```sql filename="maintenance" copy
+SHOW GRANTS FOR 'reader'@'localhost';
+
+CHECK TABLE t;
+
+ANALYZE TABLE t;
+
+OPTIMIZE TABLE t;
+```
+
+## Log, Config, and Server Management
+
+Rotates logs, versions configs, and watches the whole machine.
+
+```sql filename="logs" copy
+SHOW VARIABLES LIKE 'log_error';
+
+SHOW VARIABLES LIKE 'binlog_expire_logs_seconds';
+
+FLUSH LOGS;
+```
+
+Security posture lives on the Security page. Health signals live on the Monitoring page.

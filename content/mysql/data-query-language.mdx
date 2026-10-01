@@ -1,0 +1,97 @@
+---
+title: Data Query Language
+description: Every MySQL DQL clause, with row examples.
+sidebarTitle: Data Query Language
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Data Query Language
+
+DQL reads rows. It changes nothing. One command plus the clauses below, in written order.
+
+<Steps>
+
+### Choose columns
+
+Name only the columns you need with `SELECT`. Pull them from one table with `FROM`.
+
+### Filter and group
+
+Keep wanted rows with `WHERE`. Group them with `GROUP BY`. Filter groups with `HAVING`.
+
+### Sort and page
+
+Order the result with `ORDER BY`. Cap it with `LIMIT`. Skip ahead with `OFFSET`.
+
+</Steps>
+
+<Callout type="info">
+  Write clauses in this order: `SELECT` → `FROM` → `WHERE` → `GROUP BY` →
+  `HAVING` → `ORDER BY` → `LIMIT` → `OFFSET`.
+</Callout>
+
+## SELECT and FROM
+
+Choose columns. Name the source table. `DISTINCT` removes duplicate values.
+
+```sql filename="select" copy
+SELECT id, title, amount FROM t;
+
+SELECT DISTINCT qty FROM t ORDER BY qty;
+```
+
+## WHERE
+
+Filters rows before grouping. One condition tests one fact.
+
+```sql filename="where" copy
+SELECT * FROM t WHERE qty > 0;
+
+SELECT * FROM t WHERE amount BETWEEN 20 AND 50;
+```
+
+## GROUP BY and HAVING
+
+Groups rows for aggregates, then filters groups.
+
+```sql filename="group" copy
+SELECT qty, COUNT(*) AS rows FROM t GROUP BY qty;
+
+SELECT qty, COUNT(*) AS rows FROM t GROUP BY qty HAVING COUNT(*) > 1;
+```
+
+`WHERE` filters rows first. `HAVING` filters groups after `GROUP BY`.
+
+<Tabs items={['WHERE', 'HAVING']}>
+  <Tabs.Tab>
+    Tests each row before any grouping. Use for column values.
+
+    ```sql filename="where filter" copy
+    SELECT * FROM t WHERE qty > 0;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Tests each group after grouping. Use with aggregates.
+
+    ```sql filename="having filter" copy
+    SELECT qty, COUNT(*) AS rows FROM t GROUP BY qty HAVING COUNT(*) > 1;
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## ORDER BY, LIMIT, OFFSET
+
+Sorts the result, caps row count, skips rows for paging.
+
+```sql filename="paging" copy
+SELECT id, title, amount FROM t ORDER BY amount DESC LIMIT 5;
+
+SELECT id, title, amount FROM t ORDER BY amount DESC LIMIT 5 OFFSET 5;
+```
+
+<Callout type="warning">
+  `OFFSET` still reads the skipped rows. Large offsets get slow on big tables.
+</Callout>

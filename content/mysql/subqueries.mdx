@@ -1,0 +1,120 @@
+---
+title: Subqueries
+description: Every MySQL subquery form, with nested examples.
+sidebarTitle: Subqueries
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Subqueries
+
+A subquery is a query inside a query. The inner query runs first — except correlated ones, which run once per outer row. Tables below are `t` and `line`, where `line.ref_id` points at `t.id`.
+
+<Steps>
+
+### Run the inner query alone
+
+Write the subquery first. Confirm it returns the expected rows.
+
+### Wrap it in the outer
+
+Place it in `WHERE`, `FROM`, or `SELECT`. Match shapes: one value, one column, or full rows.
+
+### Correlate only if needed
+
+Reference the outer row only when the inner answer depends on it.
+
+</Steps>
+
+## Scalar Subqueries
+
+Returns one value. Compares with `=`, `>`, and other scalar operators.
+
+```sql filename="scalar" copy
+SELECT * FROM t WHERE amount = (SELECT MAX(amount) FROM t);
+```
+
+## Row Subqueries
+
+Returns full rows for multi-column compares.
+
+```sql filename="row" copy
+SELECT * FROM t WHERE (qty, amount) IN (SELECT qty, amount FROM line);
+```
+
+## Column Subqueries
+
+Returns one column with many rows. Feeds `IN`, `ANY`, and `ALL`.
+
+```sql filename="column" copy
+SELECT * FROM t WHERE id IN (SELECT ref_id FROM line);
+```
+
+## Correlated Subqueries
+
+References the outer row. Runs once per outer row.
+
+```sql filename="correlated" copy
+SELECT * FROM t WHERE qty > (SELECT AVG(qty) FROM line l WHERE l.ref_id = t.id);
+```
+
+<Callout type="info">
+  Correlated subqueries run once per outer row. Fine on small tables, costly on
+  large ones.
+</Callout>
+
+## EXISTS and NOT EXISTS
+
+Tests whether matching rows exist. `NULL`-safe by design.
+
+```sql filename="exists" copy
+SELECT * FROM t WHERE EXISTS (SELECT 1 FROM line l WHERE l.ref_id = t.id);
+
+SELECT * FROM t WHERE NOT EXISTS (SELECT 1 FROM line l WHERE l.ref_id = t.id);
+```
+
+<Tabs items={['EXISTS', 'IN']}>
+  <Tabs.Tab>
+    Stops at the first match. Best for large child tables.
+
+    ```sql filename="exists form" copy
+    SELECT * FROM t WHERE EXISTS (SELECT 1 FROM line l WHERE l.ref_id = t.id);
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Reads cleaner for short static lists.
+
+    ```sql filename="in form" copy
+    SELECT * FROM t WHERE id IN (1, 2, 3);
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## IN and NOT IN
+
+Tests membership in a set.
+
+```sql filename="in" copy
+SELECT * FROM t WHERE id IN (SELECT ref_id FROM line);
+
+SELECT * FROM t WHERE id NOT IN (SELECT ref_id FROM line WHERE ref_id IS NOT NULL);
+```
+
+<Callout type="warning">
+  `NOT IN` with a `NULL` in the set matches zero rows. Use `NOT EXISTS` for
+  nullable columns.
+</Callout>
+
+## ANY and ALL
+
+Compares against at least one, or every, value in the set.
+
+```sql filename="any all" copy
+SELECT * FROM t WHERE amount > ANY (SELECT amount FROM line);
+
+SELECT * FROM t WHERE amount > ALL (SELECT amount FROM line);
+```
+
+`ANY` needs one match. `ALL` needs every value to match.

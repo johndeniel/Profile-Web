@@ -1,0 +1,116 @@
+---
+title: User and Account Management
+description: Every MySQL account lifecycle task, with user examples.
+sidebarTitle: User and Account Management
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# User and Account Management
+
+Account management owns the user lifecycle: create, authenticate, expire, lock, and remove. Grant syntax itself lives on the Data Control Language page.
+
+<Steps>
+
+### Create the account
+
+Make the user with no rights. Rights come separately through grants and roles.
+
+### Set authentication
+
+Choose password or plugin auth. Enforce expiry and lockout on the account.
+
+### Verify and retire
+
+Inspect effective rights. Expire, lock, then drop accounts that outlive their job.
+
+</Steps>
+
+## Users and Accounts
+
+Creates, alters, and removes login accounts. A user is a name plus a host.
+
+```sql filename="accounts" copy
+CREATE USER 'reader'@'localhost' IDENTIFIED BY 'secret';
+
+ALTER USER 'reader'@'localhost' ACCOUNT LOCK;
+
+ALTER USER 'reader'@'localhost' ACCOUNT UNLOCK;
+
+DROP USER IF EXISTS 'reader'@'localhost';
+```
+
+<Callout type="warning">
+  `DROP USER` silently revokes everything that account held. Reassign duties
+  before dropping.
+</Callout>
+
+## User Authentication
+
+Proves identity at login. Password or plugin, set per account.
+
+```sql filename="authentication" copy
+ALTER USER 'reader'@'localhost' IDENTIFIED BY 'secret';
+
+ALTER USER 'reader'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'secret';
+```
+
+`caching_sha2_password` is the default plugin on modern servers.
+
+## Password Management
+
+Expires credentials on a schedule. Locks accounts under attack.
+
+<Tabs items={['EXPIRE', 'EXPIRE INTERVAL', 'LOCK']}>
+  <Tabs.Tab>
+    Forces a change at next login.
+
+    ```sql filename="expire now" copy
+    ALTER USER 'reader'@'localhost' PASSWORD EXPIRE;
+    ```
+
+    Use for onboarding and suspected leaks.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Forces rotation on a fixed cadence.
+
+    ```sql filename="expire interval" copy
+    ALTER USER 'reader'@'localhost' PASSWORD EXPIRE INTERVAL 90 DAY;
+    ```
+
+    Use for standing service accounts.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Blocks login without deleting the account or its grants.
+
+    ```sql filename="lock" copy
+    ALTER USER 'reader'@'localhost' ACCOUNT LOCK;
+    ```
+
+    Use during incidents and departures.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Roles and Privileges
+
+Bundles rights into named roles. Grants the role, then activates it by default.
+
+```sql filename="roles" copy
+CREATE ROLE 'analyst';
+
+GRANT SELECT ON mydb.* TO 'analyst';
+
+GRANT 'analyst' TO 'reader'@'localhost';
+
+SET DEFAULT ROLE 'analyst' TO 'reader'@'localhost';
+
+SHOW GRANTS FOR 'reader'@'localhost';
+```
+
+<Callout type="info">
+  Grant and revoke syntax lives on the Data Control Language page. Lifecycle
+  lives here.
+</Callout>

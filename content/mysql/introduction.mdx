@@ -1,0 +1,43 @@
+---
+title: Introduction to MySQL
+description: What MySQL is, what a database is, and what a table is.
+sidebarTitle: Introduction
+---
+
+# Introduction to MySQL
+
+MySQL stores records in tables and retrieves them with SQL. This page covers the three ideas everything else builds on.
+
+## 1. What is MySQL RDBMS?
+
+RDBMS means **Relational Database Management System**.
+
+- **Database** = one container for related tables.
+- **Relational** = tables link together by key.
+- **Management System** = MySQL itself. It stores rows, enforces rules, and runs queries.
+
+| Excel spreadsheet           | MySQL                            |
+| --------------------------- | -------------------------------- |
+| Any text in any cell        | Each column has a fixed **type** |
+| Slow past thousands of rows | Fast at millions of rows         |
+| Sheets stay separate        | Tables join by key               |
+| Overwrites go unnoticed     | Constraints reject bad data      |
+
+## 2. What is a Database?
+
+A **database** is one project boundary for related tables. A server holds many databases. Select one before working.
+
+```sql filename="database in one glance" copy
+SHOW DATABASES;   -- list all databases
+CREATE DATABASE mydb;  -- make a new one
+USE mydb;    -- select it before working
+```
+
+## 3. What is a Table?
+
+A **table** holds one kind of record.
+
+- **Row** = one record.
+- **Column** = one field of each record.
+- **Schema** = the column list, with types and rules.
+- **Primary key** = the unique number per row. MySQL locates rows by it.

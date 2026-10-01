@@ -1,0 +1,120 @@
+---
+title: Full-Text Search
+description: Every MySQL full-text search mode, with match examples.
+sidebarTitle: Full-Text Search
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Full-Text Search
+
+Full-text search finds words inside text columns. Index first, match second, rank by relevance.
+
+<Steps>
+
+### Index the text
+
+Build a `FULLTEXT` index over the searched columns.
+
+### Match the words
+
+Query with `MATCH ... AGAINST`. Pick natural or boolean mode.
+
+### Rank the hits
+
+Order by the relevance score. Refine terms on misses.
+
+</Steps>
+
+## Full-Text Indexes
+
+Required before any full-text query. Without one, matching errors out.
+
+```sql filename="fulltext index" copy
+CREATE FULLTEXT INDEX ft_note ON t (note);
+
+SELECT * FROM t WHERE MATCH(note) AGAINST('refund');
+```
+
+## Natural Language Search
+
+Ranks by relevance with plain terms. The default mode.
+
+```sql filename="natural" copy
+SELECT title, MATCH(note) AGAINST('late refund') AS score
+FROM t
+WHERE MATCH(note) AGAINST('late refund')
+ORDER BY score DESC;
+```
+
+## Boolean Search
+
+Controls terms with operators. No automatic ranking.
+
+| Operator | Meaning                     |
+| -------- | --------------------------- |
+| `+`      | Term must appear.           |
+| `-`      | Term must not appear.       |
+| `>` `<`  | Raise or lower term weight. |
+| `( )`    | Group subexpressions.       |
+| `~`      | Negate term weight.         |
+| `*`      | Trailing wildcard.          |
+| `" "`    | Exact phrase.               |
+
+```sql filename="boolean" copy
+SELECT * FROM t WHERE MATCH(note) AGAINST('+late -early' IN BOOLEAN MODE);
+```
+
+<Tabs items={['Natural', 'Boolean']}>
+  <Tabs.Tab>
+    Plain terms, ranked by relevance score.
+
+    ```sql filename="natural demo" copy
+    SELECT * FROM t
+    WHERE MATCH(note) AGAINST('late refund')
+    ORDER BY MATCH(note) AGAINST('late refund') DESC;
+    ```
+
+    Use for search boxes and ranked lists.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Operator-driven terms, unranked unless asked.
+
+    ```sql filename="boolean demo" copy
+    SELECT * FROM t WHERE MATCH(note) AGAINST('+late -early' IN BOOLEAN MODE);
+    ```
+
+    Use for must-have and must-not filters.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Query Expansion
+
+Runs the search twice: first pass finds hits, second pass searches with their top words.
+
+```sql filename="expansion" copy
+SELECT * FROM t WHERE MATCH(note) AGAINST('refund' WITH QUERY EXPANSION);
+```
+
+<Callout type="warning">
+  Short words vanish under stopword lists and minimum token lengths. A silent
+  miss usually means the term never indexed.
+</Callout>
+
+## Search Relevance
+
+Scores each hit as a float. Higher means closer to the terms.
+
+```sql filename="relevance" copy
+SELECT title, MATCH(note) AGAINST('late refund') AS score
+FROM t
+WHERE MATCH(note) AGAINST('late refund')
+ORDER BY score DESC;
+```
+
+<Callout type="info">
+  Relevance is a floating score, not a percentage. Compare rows against each
+  other, never against fixed thresholds.
+</Callout>

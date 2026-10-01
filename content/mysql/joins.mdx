@@ -1,0 +1,125 @@
+---
+title: Joins
+description: Every MySQL join type, with two-table examples.
+sidebarTitle: Joins
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Joins
+
+Joins combine rows from two tables by matching keys. The join type decides which unmatched rows survive. Tables below are `t` and `line`, where `line.ref_id` points at `t.id`.
+
+<Steps>
+
+### Name both tables
+
+List the left table and the joined table. Alias long names with `AS`.
+
+### State the match
+
+Write the key equality in `ON`. `CROSS JOIN` and `NATURAL JOIN` skip this step.
+
+### Pick the survival rule
+
+`INNER` keeps matches only. `LEFT` keeps all left rows. `RIGHT` keeps all right rows.
+
+</Steps>
+
+## INNER JOIN
+
+Keeps only rows with a match on both sides.
+
+```sql filename="inner join" copy
+SELECT t.id, l.qty
+FROM t
+INNER JOIN line l ON l.ref_id = t.id;
+```
+
+## LEFT JOIN
+
+Keeps all left rows. Columns from the right side are `NULL` where nothing matches.
+
+```sql filename="left join" copy
+SELECT t.id, l.qty
+FROM t
+LEFT JOIN line l ON l.ref_id = t.id;
+```
+
+A `NULL` in `l.qty` means that row has no match. That check is the whole point of `LEFT JOIN`.
+
+## RIGHT JOIN
+
+Keeps all right rows. Columns from the left side are `NULL` where nothing matches.
+
+```sql filename="right join" copy
+SELECT t.id, l.qty
+FROM t
+RIGHT JOIN line l ON l.ref_id = t.id;
+```
+
+<Callout type="info">
+  `RIGHT JOIN` is rarely needed. Flip the tables and use `LEFT JOIN` instead.
+</Callout>
+
+<Tabs items={['LEFT JOIN', 'Flipped RIGHT JOIN']}>
+  <Tabs.Tab>
+    Left table first, keep all its rows.
+
+    ```sql filename="left form" copy
+    SELECT t.id, l.qty
+    FROM t
+    LEFT JOIN line l ON l.ref_id = t.id;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Same result, tables swapped. Proves the two forms are one join.
+
+    ```sql filename="right form" copy
+    SELECT t.id, l.qty
+    FROM line l
+    RIGHT JOIN t ON l.ref_id = t.id;
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## CROSS JOIN
+
+Pairs every left row with every right row. No `ON` clause.
+
+```sql filename="cross join" copy
+SELECT t.id, l.qty
+FROM t
+CROSS JOIN line l;
+```
+
+Result size is left count times right count. Use only on small tables.
+
+## SELF JOIN
+
+Joins a table to itself. Aliases tell the two copies apart.
+
+```sql filename="self join" copy
+SELECT a.id, b.id AS child_id
+FROM t AS a
+INNER JOIN t AS b ON b.parent_id = a.id;
+```
+
+Needs a self-link column such as `parent_id` pointing back at the same table.
+
+## NATURAL JOIN
+
+Matches automatically on all same-named columns. No `ON` clause.
+
+```sql filename="natural join" copy
+SELECT id, qty
+FROM t
+NATURAL JOIN line;
+```
+
+<Callout type="warning">
+  `NATURAL JOIN` matches on every same-named column silently. Adding a column
+  can change results without touching the query.
+</Callout>

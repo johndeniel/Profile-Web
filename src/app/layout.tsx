@@ -1,5 +1,5 @@
 import { Layout, Navbar } from 'nextra-theme-docs';
-import { ThemeSwitch } from '@/components/theme-switch';
+import { NavbarActions } from '@/components/navbar-actions';
 import { Head } from 'nextra/components';
 import { getPageMap } from 'nextra/page-map';
 import localFont from 'next/font/local';
@@ -29,7 +29,7 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   const navbar = (
     <Navbar logo={<b>Profile Web</b>}>
-      <ThemeSwitch />
+      <NavbarActions />
     </Navbar>
   );
   const pageMap = await getPageMap();
@@ -44,7 +44,12 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     >
       <Head />
       <body className="font-sans">
-        <Layout navbar={navbar} pageMap={pageMap} darkMode>
+        <Layout
+          navbar={navbar}
+          pageMap={pageMap}
+          darkMode
+          navigation={{ prev: true, next: true }}
+        >
           {children}
         </Layout>
       </body>

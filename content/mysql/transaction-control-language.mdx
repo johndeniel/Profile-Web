@@ -1,0 +1,156 @@
+---
+title: Transaction Control Language
+description: Every MySQL TCL command, with transaction examples.
+sidebarTitle: Transaction Control Language
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Transaction Control Language
+
+TCL groups writes into all-or-nothing units. Either every statement lands, or none does.
+
+<Steps>
+
+### Start the unit
+
+Open with `START TRANSACTION`. Autocommit pauses inside.
+
+### Write and check
+
+Run the writes. Read back with `SELECT`. Confirm the rows look right.
+
+### Commit or roll back
+
+Keep the unit with `COMMIT`. Discard it with `ROLLBACK`.
+
+</Steps>
+
+## START TRANSACTION and BEGIN
+
+Opens a transaction unit. The two forms are synonyms in MySQL.
+
+```sql filename="start" copy
+START TRANSACTION;
+
+-- equivalent form
+BEGIN;
+```
+
+## COMMIT
+
+Makes the unit's changes permanent.
+
+```sql filename="commit" copy
+START TRANSACTION;
+
+UPDATE t SET qty = qty - 1 WHERE id = 2;
+
+UPDATE t SET qty = qty + 1 WHERE id = 5;
+
+COMMIT;
+```
+
+<Callout type="warning">
+  Only `COMMIT` makes work permanent. A dropped connection rolls everything
+  back.
+</Callout>
+
+## ROLLBACK
+
+Discards the unit's changes. Tables return to their prior state.
+
+```sql filename="rollback" copy
+START TRANSACTION;
+
+UPDATE t SET qty = qty - 1 WHERE id = 2;
+
+ROLLBACK;
+```
+
+## Savepoints
+
+Marks points inside a unit for partial rollback.
+
+```sql filename="savepoints" copy
+START TRANSACTION;
+
+UPDATE t SET qty = qty - 1 WHERE id = 2;
+
+SAVEPOINT sp_first;
+
+UPDATE t SET qty = qty - 99 WHERE id = 5;
+
+ROLLBACK TO SAVEPOINT sp_first;
+
+RELEASE SAVEPOINT sp_first;
+
+COMMIT;
+```
+
+`ROLLBACK` discards everything. `ROLLBACK TO` keeps work before the savepoint.
+
+<Tabs items={['COMMIT', 'ROLLBACK', 'ROLLBACK TO']}>
+  <Tabs.Tab>
+    Keeps the whole unit. Every statement lands.
+
+    ```sql filename="ending commit" copy
+    START TRANSACTION;
+
+    UPDATE t SET qty = qty - 1 WHERE id = 2;
+
+    COMMIT;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Discards the whole unit. No statement lands.
+
+    ```sql filename="ending rollback" copy
+    START TRANSACTION;
+
+    UPDATE t SET qty = qty - 1 WHERE id = 2;
+
+    ROLLBACK;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Discards work after the savepoint. Earlier work survives to `COMMIT`.
+
+    ```sql filename="ending partial" copy
+    START TRANSACTION;
+
+    UPDATE t SET qty = qty - 1 WHERE id = 2;
+
+    SAVEPOINT sp_first;
+
+    UPDATE t SET qty = qty - 99 WHERE id = 5;
+
+    ROLLBACK TO SAVEPOINT sp_first;
+
+    COMMIT;
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## Transaction Isolation
+
+Sets what one transaction sees of others while running.
+
+| Level              | Sees                                 | Use                        |
+| ------------------ | ------------------------------------ | -------------------------- |
+| `READ UNCOMMITTED` | Uncommitted rows                     | Rare; dirty reads allowed  |
+| `READ COMMITTED`   | Committed rows only                  | Short transactions         |
+| `REPEATABLE READ`  | Same snapshot for the whole unit     | Default; most app work     |
+| `SERIALIZABLE`     | Fully ordered, locks everything read | Money moves, strict audits |
+
+```sql filename="isolation" copy
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+```
+
+<Callout type="info">
+  InnoDB defaults to `REPEATABLE READ`. Non-transactional engines ignore these
+  statements.
+</Callout>

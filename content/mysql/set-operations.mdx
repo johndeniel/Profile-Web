@@ -1,0 +1,105 @@
+---
+title: Set Operations
+description: Every MySQL set operation, with stacked examples.
+sidebarTitle: Set Operations
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Set Operations
+
+Set operations stack result sets vertically. Every branch needs the same columns in the same order.
+
+<Steps>
+
+### Match column shapes
+
+Give each `SELECT` the same columns and compatible types.
+
+### Pick the operator
+
+Dedupe with `UNION`, keep all with `UNION ALL`, intersect with `INTERSECT`, subtract with `EXCEPT`.
+
+### Sort and page once
+
+Place a single `ORDER BY` and `LIMIT` at the very end. They apply to the whole stack.
+
+</Steps>
+
+## UNION
+
+Stacks branches and removes duplicate rows.
+
+```sql filename="union" copy
+SELECT title FROM t WHERE qty > 0
+UNION
+SELECT title FROM t WHERE amount > 50;
+```
+
+## UNION ALL
+
+Stacks branches and keeps duplicate rows. No sort pass, so faster.
+
+```sql filename="union all" copy
+SELECT title FROM t WHERE qty > 0
+UNION ALL
+SELECT title FROM t WHERE amount > 50;
+```
+
+`UNION` dedupes. `UNION ALL` keeps every row.
+
+<Tabs items={['UNION', 'UNION ALL']}>
+  <Tabs.Tab>
+    One copy of each repeated row.
+
+    ```sql filename="union demo" copy
+    SELECT title FROM t WHERE qty > 0
+    UNION
+    SELECT title FROM t WHERE amount > 50;
+    ```
+
+    Use when duplicates would lie.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Every row kept, duplicates included.
+
+    ```sql filename="union all demo" copy
+    SELECT title FROM t WHERE qty > 0
+    UNION ALL
+    SELECT title FROM t WHERE amount > 50;
+    ```
+
+    Use when branches cannot overlap, or duplicates are the point.
+
+  </Tabs.Tab>
+</Tabs>
+
+## INTERSECT
+
+Keeps rows present in every branch. Needs MySQL 8.0.31 or later.
+
+```sql filename="intersect" copy
+SELECT title FROM t WHERE qty > 0
+INTERSECT
+SELECT title FROM t WHERE amount > 50;
+```
+
+## EXCEPT
+
+Keeps rows in the first branch but not the second. Needs MySQL 8.0.31 or later.
+
+```sql filename="except" copy
+SELECT title FROM t WHERE qty > 0
+EXCEPT
+SELECT title FROM t WHERE amount > 50;
+```
+
+<Callout type="warning">
+  `A EXCEPT B` and `B EXCEPT A` differ. Operand order is the query.
+</Callout>
+
+<Callout type="info">
+  `INTERSECT` and `EXCEPT` need MySQL 8.0.31 or later. Older servers use the
+  `JOIN` equivalents from Subqueries.
+</Callout>

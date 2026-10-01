@@ -1,0 +1,127 @@
+---
+title: Spatial Data
+description: Every MySQL spatial type and query, with location examples.
+sidebarTitle: Spatial Data
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Spatial Data
+
+Spatial data stores shapes on a coordinate plane: points, lines, and areas. Query them by relationship, not by equality.
+
+<Steps>
+
+### Store with an SRID
+
+Give geometry columns one spatial reference id. Never mix systems in one column.
+
+### Insert real shapes
+
+Build values with `ST_Point` and `ST_GeomFromText`.
+
+### Index and query
+
+Add a `SPATIAL` index. Ask containment and distance questions.
+
+</Steps>
+
+## Geometry Family
+
+| Type                 | Holds             |
+| -------------------- | ----------------- |
+| `POINT`              | One location      |
+| `LINESTRING`         | Connected points  |
+| `POLYGON`            | Closed area       |
+| `MULTIPOINT`         | Several locations |
+| `MULTILINESTRING`    | Several lines     |
+| `MULTIPOLYGON`       | Several areas     |
+| `GEOMETRYCOLLECTION` | Mixed shapes      |
+
+```sql filename="geometry column" copy
+CREATE TABLE t (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  loc POINT SRID 4326 NOT NULL,
+  area POLYGON SRID 4326 NOT NULL,
+  SPATIAL INDEX sp_loc (loc)
+);
+```
+
+## Spatial Reference Systems
+
+Fixes what coordinates mean. Cartesian math on flat planes, geographic math on Earth.
+
+<Tabs items={['SRID 0', 'SRID 4326']}>
+  <Tabs.Tab>
+    Default Cartesian plane. Units are whatever the data uses.
+
+    ```sql filename="cartesian" copy
+    CREATE TABLE t (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      loc POINT SRID 0 NOT NULL
+    );
+    ```
+
+    Use for floor plans and game maps.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    GPS coordinates. Distance reads in meters.
+
+    ```sql filename="geographic" copy
+    CREATE TABLE t (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      loc POINT SRID 4326 NOT NULL
+    );
+    ```
+
+    Use for real-world locations.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  One query, one SRID. Mixing reference systems in a single query errors out.
+</Callout>
+
+## Building Values
+
+Constructs shapes from text and coordinates.
+
+```sql filename="building" copy
+SELECT ST_Point(1.0, 2.0);
+
+SELECT ST_GeomFromText('POINT(1 2)', 4326);
+
+SELECT ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))', 0);
+```
+
+## Spatial Relationships
+
+Tests how shapes touch. Each returns true or false per row pair.
+
+```sql filename="relationships" copy
+SELECT * FROM t WHERE ST_Contains(area, loc);
+
+SELECT * FROM t WHERE ST_Within(loc, area);
+
+SELECT ST_Distance(a.loc, b.loc) FROM t a, t b WHERE a.id <> b.id;
+
+SELECT * FROM t WHERE ST_Intersects(loc, area);
+```
+
+## Spatial Functions
+
+Computes over shapes: distance, area, buffers, unions.
+
+```sql filename="functions" copy
+SELECT ST_Area(area) FROM t;
+
+SELECT ST_AsText(loc) FROM t;
+
+SELECT ST_Buffer(loc, 100) FROM t;
+```
+
+<Callout type="info">
+  Default SRID is 0, Cartesian. Declare 4326 explicitly for GPS data.
+</Callout>

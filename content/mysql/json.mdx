@@ -1,0 +1,151 @@
+---
+title: JSON
+description: Every MySQL JSON operation, with document examples.
+sidebarTitle: JSON
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# JSON
+
+JSON stores schemaless documents in one column. Query and change parts without reading the whole row. The running document below is `{"color": "black", "sizes": ["S", "M"]}` in `t.attributes`.
+
+<Steps>
+
+### Store valid JSON
+
+Write documents into a `JSON` column. Invalid documents are rejected on write.
+
+### Extract what you need
+
+Pull values with paths. Filter rows with search functions.
+
+### Modify and re-validate
+
+Change parts with set functions. The column re-validates every write.
+
+</Steps>
+
+## JSON Objects
+
+Builds an object from key-value pairs.
+
+```sql filename="objects" copy
+SELECT JSON_OBJECT('color', 'black', 'qty', 5);
+```
+
+## JSON Arrays
+
+Builds an array from values.
+
+```sql filename="arrays" copy
+SELECT JSON_ARRAY('S', 'M');
+```
+
+## JSON Extraction
+
+Pulls values by path. `$.color` reads a key. `$.sizes[0]` reads an array position.
+
+```sql filename="extraction" copy
+SELECT JSON_EXTRACT(attributes, '$.color') FROM t;
+
+SELECT attributes->'$.color' FROM t;
+
+SELECT attributes->>'$.color' FROM t;
+
+SELECT attributes->'$.sizes[0]' FROM t;
+```
+
+`->` returns quoted JSON. `->>` returns unquoted text.
+
+<Callout type="info">
+  `->>` equals `JSON_UNQUOTE(JSON_EXTRACT(...))`. Prefer the operator form.
+</Callout>
+
+## JSON Modification
+
+Changes parts of a document. Three functions, three overwrite rules.
+
+```sql filename="modification" copy
+SELECT JSON_SET(attributes, '$.color', 'white') FROM t;
+
+SELECT JSON_INSERT(attributes, '$.color', 'white') FROM t;
+
+SELECT JSON_REMOVE(attributes, '$.sizes') FROM t;
+```
+
+<Tabs items={['JSON_SET', 'JSON_INSERT', 'JSON_REPLACE']}>
+  <Tabs.Tab>
+    Adds the path or replaces it when present.
+
+    ```sql filename="set demo" copy
+    SELECT JSON_SET(attributes, '$.color', 'white') FROM t;
+    ```
+
+    Use for upsert-style writes.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Adds the path only when absent. Existing values survive.
+
+    ```sql filename="insert demo" copy
+    SELECT JSON_INSERT(attributes, '$.color', 'white') FROM t;
+    ```
+
+    Use for defaults that must not overwrite.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Replaces the path only when present. Missing paths stay missing.
+
+    ```sql filename="replace demo" copy
+    SELECT JSON_REPLACE(attributes, '$.color', 'white') FROM t;
+    ```
+
+    Use for corrections to existing values.
+
+  </Tabs.Tab>
+</Tabs>
+
+## JSON Searching
+
+Tests documents for values and paths.
+
+```sql filename="searching" copy
+SELECT * FROM t WHERE JSON_CONTAINS(attributes, '"black"', '$.color');
+
+SELECT JSON_SEARCH(attributes, 'one', 'M') FROM t;
+
+SELECT * FROM t WHERE 'M' MEMBER OF(attributes->'$.sizes');
+```
+
+`JSON_CONTAINS` tests values. `JSON_SEARCH` returns matching paths. `MEMBER OF()` tests array membership.
+
+## JSON Validation
+
+Checks documents before trusting them.
+
+```sql filename="validation" copy
+SELECT JSON_VALID('{"color": "black"}');
+
+SELECT JSON_VALID('not json');
+```
+
+Valid documents return 1. Anything else returns 0.
+
+<Callout type="warning">
+  `TEXT` storage skips validation. Invalid documents slip in. Use the `JSON`
+  column type.
+</Callout>
+
+## JSON Operators
+
+Navigates documents inside queries. Paths start at `$`.
+
+```sql filename="operators" copy
+SELECT attributes->'$.color' FROM t WHERE attributes->'$.sizes[0]' = 'S';
+
+SELECT attributes->'$[*]' FROM t;
+```
+
+`$[*]` reads every top-level value. Combine operators with `WHERE` to filter on document contents.

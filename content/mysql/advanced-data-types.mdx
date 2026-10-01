@@ -1,0 +1,56 @@
+---
+title: Advanced Data Types
+description: Every advanced MySQL data type choice, mapped to its deep guide.
+sidebarTitle: Advanced Data Types
+---
+
+import { Callout, Steps } from 'nextra/components';
+
+# Advanced Data Types
+
+Advanced types cover values the basics strain to hold: huge integers, long text, fine timestamps, documents, shapes, and computed columns. Each section names the upgrade and points at the page that owns its depth.
+
+<Steps>
+
+### Outgrow a basic type
+
+Hit a range, length, or precision wall with a plain column.
+
+### Pick the advanced form
+
+Match the value shape below. Reach past it only on measurement.
+
+### Prove the need
+
+Confirm with real row sizes. Revert when basics fit again.
+
+</Steps>
+
+| Need                | Advanced form                            | Owner page                                                      |
+| ------------------- | ---------------------------------------- | --------------------------------------------------------------- |
+| Huge counters       | `BIGINT UNSIGNED`, `DECIMAL` wider       | [Data Types](/mysql/data-types)                                 |
+| Long or rich text   | `MEDIUMTEXT`, `LONGTEXT`, `JSON`         | [Data Types](/mysql/data-types)                                 |
+| Fine timestamps     | Temporal types with `fsp` precision      | [Data Types](/mysql/data-types)                                 |
+| Flexible documents  | `JSON` column with path queries          | [JSON](/mysql/json)                                             |
+| Locations and areas | Spatial types with `SRID`                | [Spatial Data](/mysql/spatial-data)                             |
+| Derived values      | Generated columns, `STORED` or `VIRTUAL` | [Storage and Table Features](/mysql/storage-and-table-features) |
+
+## Choosing under pressure
+
+```sql filename="advanced choice" copy
+SELECT DATA_TYPE, NUMERIC_PRECISION, DATETIME_PRECISION
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'mydb' AND TABLE_NAME = 't';
+```
+
+Read what the schema actually holds before widening anything.
+
+<Callout type="warning">
+  The wrong type costs range or precision silently. Widen on measurement, never
+  on hunch.
+</Callout>
+
+<Callout type="info">
+  Temporal fine print is fractional-seconds precision (`fsp`, 0 to 6). Default
+  is 0 — no fractional part stored.
+</Callout>

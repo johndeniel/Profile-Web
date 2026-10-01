@@ -1,0 +1,95 @@
+---
+title: Storage and Table Features
+description: Every MySQL storage engine and table option, with engine examples.
+sidebarTitle: Storage and Table Features
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Storage and Table Features
+
+Storage engines decide how tables keep rows: transactions, locks, and crash behavior. Table options tune each table at creation.
+
+<Steps>
+
+### Pick an engine
+
+Need transactions and row locks, take InnoDB. Need ephemeral speed, take MEMORY.
+
+### Set table options
+
+Declare engine, charset, and comment in `CREATE TABLE`.
+
+### Add computed columns
+
+Derive values with generated columns instead of duplicating logic in writes.
+
+</Steps>
+
+## Storage Engines
+
+| Engine   | Transactions | Locks | Use                           |
+| -------- | ------------ | ----- | ----------------------------- |
+| `InnoDB` | Yes          | Row   | Default. Almost every table.  |
+| `MyISAM` | No           | Table | Legacy read-only archives.    |
+| `MEMORY` | No           | Table | Ephemeral caches and scratch. |
+
+```sql filename="engines" copy
+SHOW ENGINES;
+
+CREATE TABLE t (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL
+) ENGINE=InnoDB;
+```
+
+<Callout type="warning">
+  MyISAM has no transactions and no crash safety. A killed write leaves torn
+  tables.
+</Callout>
+
+<Callout type="info">
+  InnoDB is the default engine. Choose anything else only for a measured reason.
+</Callout>
+
+## Table Options
+
+Tunes one table at creation.
+
+```sql filename="options" copy
+CREATE TABLE t (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='reference rows';
+```
+
+## Generated Columns
+
+Computes values from other columns. Never written directly.
+
+<Tabs items={['VIRTUAL', 'STORED']}>
+  <Tabs.Tab>
+    Computed on read. No disk cost, small read cost.
+
+    ```sql filename="virtual" copy
+    ALTER TABLE t ADD COLUMN total DECIMAL(10,2)
+      GENERATED ALWAYS AS (amount * qty) VIRTUAL;
+    ```
+
+    Use for cheap derivations read rarely.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Computed on write. Costs disk, reads free. Indexable.
+
+    ```sql filename="stored" copy
+    ALTER TABLE t ADD COLUMN total DECIMAL(10,2)
+      GENERATED ALWAYS AS (amount * qty) STORED;
+    ```
+
+    Use for expensive derivations read often or indexed.
+
+  </Tabs.Tab>
+</Tabs>
+
+Both forms accept secondary indexes.

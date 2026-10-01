@@ -1,0 +1,101 @@
+---
+title: Views
+description: Every MySQL view operation, with saved-query examples.
+sidebarTitle: Views
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Views
+
+A view is a saved query with a name. Query it like a table. MySQL reruns the query on every read.
+
+<Steps>
+
+### Write the SELECT
+
+Build the query first. Confirm it returns the wanted rows.
+
+### Wrap it in CREATE VIEW
+
+Give the query a name. It behaves as a read layer over its tables.
+
+### Query the name
+
+Select from the view like any table. Filters apply on top.
+
+</Steps>
+
+## Creating Views
+
+Stores a query under a name.
+
+```sql filename="create view" copy
+CREATE VIEW big AS
+SELECT id, title FROM t WHERE amount > 50;
+```
+
+## Modifying Views
+
+Changes a view's query. Two forms, one result.
+
+<Tabs items={['OR REPLACE', 'ALTER']}>
+  <Tabs.Tab>
+    Replaces the definition in one statement. Keeps existing grants.
+
+    ```sql filename="or replace" copy
+    CREATE OR REPLACE VIEW big AS
+    SELECT id, title FROM t WHERE amount > 20;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Same replacement, alternate syntax.
+
+    ```sql filename="alter view" copy
+    ALTER VIEW big AS
+    SELECT id, title FROM t WHERE amount > 20;
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+  `OR REPLACE` keeps grants on the view. `DROP` plus `CREATE` loses them.
+</Callout>
+
+## Dropping Views
+
+Removes the name. Base tables and their rows survive.
+
+```sql filename="drop view" copy
+DROP VIEW big;
+
+DROP VIEW IF EXISTS big;
+```
+
+## Updatable Views
+
+Accepts writes when the view maps cleanly to one table: single table, no aggregates, no `GROUP BY`, no `DISTINCT`, no `UNION`, no subqueries in the select list.
+
+```sql filename="updatable view" copy
+CREATE VIEW cheap AS
+SELECT id, title, amount FROM t WHERE amount <= 50;
+
+UPDATE cheap SET amount = 10.00 WHERE id = 2;
+```
+
+`INSERT` and `DELETE` pass through under the same rules.
+
+```sql filename="check option" copy
+CREATE VIEW cheap AS
+SELECT id, title, amount FROM t WHERE amount <= 50
+WITH CHECK OPTION;
+```
+
+`WITH CHECK OPTION` rejects writes that fall outside the view's filter.
+
+<Callout type="warning">
+  Writes through an updatable view hit the base table directly. There is no
+  safety copy.
+</Callout>
