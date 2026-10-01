@@ -41,4 +41,5 @@ next-env.d.ts
 .vercel
 
 # pagefind
+_pagefind/
 public/_pagefind/

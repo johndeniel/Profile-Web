@@ -1,0 +1,92 @@
+---
+title: Security
+description: Every MySQL security control, with hardening examples.
+sidebarTitle: Security
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Security
+
+Security hardens the path to the data: who connects, over what channel, under which password rules. Grant mechanics live on the Data Control Language page. Account lifecycle lives on the User and Account Management page.
+
+<Steps>
+
+### Minimize access
+
+Grant least privilege on the smallest scope. Prefer roles over direct grants.
+
+### Encrypt transport
+
+Require TLS on the wire. Verify the cipher on live sessions.
+
+### Enforce password rules
+
+Validate strength at creation. Expire and lock on schedule.
+
+</Steps>
+
+## Access Control
+
+Combines authentication, authorization, and roles into one posture.
+
+```sql filename="access control" copy
+CREATE USER 'reader'@'localhost' IDENTIFIED BY 'secret';
+
+GRANT SELECT ON mydb.* TO 'reader'@'localhost';
+
+SHOW GRANTS FOR 'reader'@'localhost';
+```
+
+Authenticate every account. Authorize each action. Review rights on a schedule.
+
+## SSL and TLS
+
+Encrypts traffic between client and server.
+
+<Tabs items={['REQUIRE SSL', 'REQUIRE X509']}>
+  <Tabs.Tab>
+    Demands an encrypted channel. Any valid server certificate qualifies.
+
+    ```sql filename="require ssl" copy
+    ALTER USER 'reader'@'localhost' REQUIRE SSL;
+    ```
+
+    Use as the minimum for every remote account.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Demands encryption plus a trusted client certificate.
+
+    ```sql filename="require x509" copy
+    ALTER USER 'reader'@'localhost' REQUIRE X509;
+    ```
+
+    Use for service accounts and cross-site links.
+
+  </Tabs.Tab>
+</Tabs>
+
+```sql filename="verify cipher" copy
+SHOW STATUS LIKE 'Ssl_cipher';
+```
+
+<Callout type="warning">
+  Default connections are unencrypted. Credentials and rows travel in cleartext
+  until TLS is required.
+</Callout>
+
+## Password Security
+
+Validates strength at creation. Rotates and locks on policy.
+
+```sql filename="password security" copy
+INSTALL COMPONENT 'file://component_validate_password';
+
+ALTER USER 'reader'@'localhost' PASSWORD EXPIRE INTERVAL 90 DAY;
+```
+
+<Callout type="info">
+  The `validate_password` component rejects weak passwords at creation time.
+  Policy details live with account management.
+</Callout>

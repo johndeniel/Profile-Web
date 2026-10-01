@@ -1,0 +1,94 @@
+---
+title: Transactions and Locking
+description: Every MySQL lock type and locking read, with contention examples.
+sidebarTitle: Transactions and Locking
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Transactions and Locking
+
+Locking guards concurrent writes. Transaction commands and isolation levels live on the Transaction Control Language page. Lock behavior lives here.
+
+<Steps>
+
+### Start small
+
+Open a transaction. Touch the fewest rows the job allows.
+
+### Lock the minimum
+
+Take row locks over table locks, shared over exclusive, and hold them briefly.
+
+### Commit fast
+
+Finish quickly. Long units block everyone else.
+
+</Steps>
+
+## Lock Types
+
+Two scopes times two modes. Scope decides how much is blocked. Mode decides who else may enter.
+
+| Scope | Shared                             | Exclusive                       |
+| ----- | ---------------------------------- | ------------------------------- |
+| Row   | Readers coexist on the same rows   | One writer owns the rows        |
+| Table | Readers coexist on the whole table | One writer owns the whole table |
+
+InnoDB locks rows, not tables, by default.
+
+## Locking Reads
+
+Locks rows selected inside a transaction.
+
+<Tabs items={['FOR UPDATE', 'FOR SHARE']}>
+  <Tabs.Tab>
+    Takes exclusive locks. Blocks other writers until commit.
+
+    ```sql filename="for update" copy
+    START TRANSACTION;
+
+    SELECT qty FROM t WHERE id = 2 FOR UPDATE;
+
+    UPDATE t SET qty = qty - 1 WHERE id = 2;
+
+    COMMIT;
+    ```
+
+    Use before a write you must own.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Takes shared locks. Blocks writers, admits readers.
+
+    ```sql filename="for share" copy
+    START TRANSACTION;
+
+    SELECT qty FROM t WHERE id = 2 FOR SHARE;
+
+    COMMIT;
+    ```
+
+    Use for consistent reads that must not shift mid-transaction.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Deadlocks
+
+Two units waiting on each other's locks. MySQL aborts one with error 1213.
+
+```sql filename="deadlock" copy
+SHOW ENGINE INNODB STATUS;
+```
+
+Prevent them with consistent lock order across code paths and short units. Detect the aftermath in the engine status output.
+
+<Callout type="warning">
+  Deadlocks abort a transaction outright. Retry aborted units in application
+  code.
+</Callout>
+
+<Callout type="info">
+  InnoDB takes row locks. MyISAM takes table locks only.
+</Callout>

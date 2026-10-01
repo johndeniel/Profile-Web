@@ -1,0 +1,98 @@
+---
+title: Replication
+description: Every MySQL replication piece, with lag-reading examples.
+sidebarTitle: Replication
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Replication
+
+Replication copies writes from a source to replicas. The source logs, replicas pull and replay. Reads scale out, writes stay on one node.
+
+<Steps>
+
+### Log writes on the source
+
+The binary log records committed changes in order.
+
+### Pull and replay on replicas
+
+Each replica fetches the log into its relay log, then applies it.
+
+### Watch the lag
+
+Read replica status. Lagging or errored replicas leave the rotation.
+
+</Steps>
+
+## Source-Replica Replication
+
+One writer, many readers. Replicas serve reads and backups.
+
+```sql filename="replica status" copy
+SHOW REPLICA STATUS;
+
+SHOW BINARY LOGS;
+```
+
+## Binary and Relay Logs
+
+Two logs, two jobs. The binary log ships changes off the source. The relay log stages them on the replica.
+
+```sql filename="logs" copy
+SHOW MASTER STATUS;
+
+SHOW RELAYLOG EVENTS;
+```
+
+<Callout type="info">
+  MySQL 8.0.22 and later says `REPLICA`. Older servers say `SLAVE` for the same
+  commands.
+</Callout>
+
+## Replication Formats
+
+Decides what each log entry carries.
+
+<Tabs items={['ROW', 'STATEMENT']}>
+  <Tabs.Tab>
+    Changed rows, verbatim. Safe and deterministic.
+
+    ```sql filename="row format" copy
+    SET GLOBAL binlog_format = 'ROW';
+    ```
+
+    Use as the default. Replication matches the source exactly.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    The statements themselves. Compact but fragile.
+
+    ```sql filename="statement format" copy
+    SET GLOBAL binlog_format = 'STATEMENT';
+    ```
+
+    Use only when log size dominates and statements are deterministic.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  Nondeterministic statements drift replicas under `STATEMENT` format. Functions
+  like `RAND()` and `NOW()` diverge silently.
+</Callout>
+
+`MIXED` lets the server pick per statement: row-based normally, statement-based when safe.
+
+## Replication Channels, Filters, and Monitoring
+
+Aims replication at chosen databases and watches its health.
+
+```sql filename="channels filters" copy
+CHANGE REPLICATION SOURCE TO SOURCE_HOST='source-host';
+
+SHOW REPLICA STATUS;
+```
+
+Filter with `replicate-do-db` for partial copies. Monitor `Seconds_Behind_Master` for lag and the error fields for breakage.

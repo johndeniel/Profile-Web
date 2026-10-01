@@ -8,6 +8,7 @@ import { ProfessionalExperienceList } from '@/components/professional-experience
 import { EducationalAttainmentList } from '@/components/educational-attainment';
 import { GitHubProjects } from '@/components/github-projects';
 import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
+import { ArticlesList } from '@/components/articles';
 import { CurriculumVitaeList } from '@/components/curriculum-vitae';
 import { LicenseCertificateList } from '@/components/license-certificate';
 import { useGitHubRepos } from '@/hooks/use-github-repos';
@@ -19,13 +20,14 @@ import {
   mockEducationalAttainment,
   mockCurriculumVitae,
   mockLicenseCertificates,
+  mockArticles,
 } from './mock';
 
 import type { PersonalInformation } from '@/types';
 
 /**
  * Profile homepage: hero card plus a sidebar (headline, links, skills,
- * background) and a main column (projects, CV, certificates).
+ * background) and a main column (projects, articles, CV, certificates).
  * Client-rendered because the GitHub section fetches live repo data.
  */
 export default function HomePage() {
@@ -65,6 +67,7 @@ export default function HomePage() {
           )}
           {loading && <GitHubProjectsSkeleton />}
           {!loading && !error && <GitHubProjects repos={repos} />}
+          <ArticlesList articles={mockArticles} />
           <CurriculumVitaeList cvs={mockCurriculumVitae} />
           <LicenseCertificateList certificates={mockLicenseCertificates} />
         </div>

@@ -1,0 +1,100 @@
+---
+title: Database Management
+description: Every MySQL database management command, with inspection examples.
+sidebarTitle: Database Management
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Database Management
+
+Database management navigates databases and inspects their shape. It changes containers and reads definitions, never row values.
+
+<Steps>
+
+### List databases
+
+Show what exists. Pick the one under work.
+
+### Select and inspect
+
+Enter it with `USE`. List tables, describe columns, read full definitions.
+
+### Query metadata
+
+Ask `INFORMATION_SCHEMA` when output must feed further queries.
+
+</Steps>
+
+## Databases
+
+Creates, enters, and removes database containers.
+
+```sql filename="databases" copy
+SHOW DATABASES;
+
+CREATE DATABASE IF NOT EXISTS mydb;
+
+USE mydb;
+
+DROP DATABASE IF EXISTS mydb_old;
+```
+
+<Callout type="warning">
+  `DROP DATABASE` is irreversible. It removes every table and row inside.
+</Callout>
+
+## Tables and Columns
+
+Lists tables, describes columns, and prints full definitions.
+
+```sql filename="tables" copy
+SHOW TABLES;
+
+SHOW COLUMNS FROM t;
+
+DESCRIBE t;
+
+SHOW CREATE TABLE t;
+```
+
+`SHOW COLUMNS` and `DESCRIBE` summarize. `SHOW CREATE TABLE` prints the exact definition.
+
+## Table and Database Information
+
+Reads shape as data. Two access styles, one source of truth.
+
+<Tabs items={['SHOW', 'INFORMATION_SCHEMA']}>
+  <Tabs.Tab>
+    Quick human-readable look at one object.
+
+    ```sql filename="show info" copy
+    SHOW TABLE STATUS LIKE 't';
+
+    SHOW CREATE DATABASE mydb;
+    ```
+
+    Use for spot checks.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Queryable metadata across many objects.
+
+    ```sql filename="schema info" copy
+    SELECT TABLE_NAME, ENGINE, TABLE_ROWS
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = 'mydb';
+
+    SELECT COLUMN_NAME, DATA_TYPE
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = 'mydb' AND TABLE_NAME = 't';
+    ```
+
+    Use when output feeds reports or automation.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+  `INFORMATION_SCHEMA` exposes read-only views. Query them, never write to them.
+</Callout>

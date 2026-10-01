@@ -1,0 +1,103 @@
+---
+title: Query Optimization
+description: Every MySQL query optimization technique, with plan examples.
+sidebarTitle: Query Optimization
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Query Optimization
+
+Query optimization makes slow queries fast. Read the plan, fix the access path, measure again.
+
+<Steps>
+
+### Read the plan
+
+Run `EXPLAIN`. Find full scans and missing keys.
+
+### Fix the access path
+
+Index the join and filter columns. Select only needed columns.
+
+### Measure again
+
+Rerun with `EXPLAIN ANALYZE`. Confirm the scan is gone.
+
+</Steps>
+
+## Query Execution Plans
+
+Shows how MySQL runs a query: join order, access per table, rows estimated.
+
+```sql filename="plan" copy
+EXPLAIN SELECT * FROM t WHERE qty > 0;
+```
+
+Read `type` (access method), `key` (index used, `NULL` means none), `rows` (rows examined), `Extra` (warnings like `Using filesort`).
+
+<Callout type="info">
+  `type=ALL` with a `NULL` key means a full table scan. Start tuning there.
+</Callout>
+
+## EXPLAIN and EXPLAIN ANALYZE
+
+Estimates versus measurements. Two tools, two costs.
+
+<Tabs items={['EXPLAIN', 'EXPLAIN ANALYZE']}>
+  <Tabs.Tab>
+    Estimates the plan without running the query. Free and safe.
+
+    ```sql filename="explain" copy
+    EXPLAIN SELECT * FROM t WHERE qty > 0;
+    ```
+
+    Use first, always.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Runs the query and reports actual times and row counts.
+
+    ```sql filename="analyze" copy
+    EXPLAIN ANALYZE SELECT * FROM t WHERE qty > 0;
+    ```
+
+    Use to confirm a fix with real numbers.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  `EXPLAIN ANALYZE` really runs the query. Writes inside it execute.
+</Callout>
+
+## Index Usage and Scans
+
+Compares how rows get read.
+
+```sql filename="access paths" copy
+SELECT * FROM t WHERE id = 2;
+
+SELECT * FROM t WHERE qty BETWEEN 1 AND 10;
+
+SELECT id FROM t;
+
+SELECT * FROM t;
+```
+
+Primary-key lookup beats range scans. Range scans beat index scans. Index scans beat full scans. The last query scans everything.
+
+`SELECT id FROM t` scans the primary-key index in order (`type=index`). It suits counts and ordered id walks.
+
+## Join Optimization
+
+Joins run fastest on indexed keys with early filtering.
+
+```sql filename="join optimization" copy
+SELECT t.title, l.qty
+FROM t
+INNER JOIN line l ON l.ref_id = t.id
+WHERE t.qty > 0;
+```
+
+Index the join columns on both sides. Filter before joining, not after. Select needed columns, never `*` on live tables.

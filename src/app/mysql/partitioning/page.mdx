@@ -1,0 +1,107 @@
+---
+title: Partitioning
+description: Every MySQL partitioning scheme, with split-table examples.
+sidebarTitle: Partitioning
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Partitioning
+
+Partitioning splits one large table into physical pieces. Queries still address it as one table. The optimizer skips untouched pieces.
+
+<Steps>
+
+### Choose a partition key
+
+Pick a column present in every `UNIQUE` key. Dates and ids qualify most often.
+
+### Choose a scheme
+
+Ordered ranges for pruning, hash for even spread.
+
+### Verify pruning
+
+Check `EXPLAIN PARTITIONS`. Queries must touch only relevant pieces.
+
+</Steps>
+
+## Partitioning Schemes
+
+| Scheme  | Splits by              | Example                              |
+| ------- | ---------------------- | ------------------------------------ |
+| `RANGE` | Ordered value bands    | Years, amount tiers                  |
+| `LIST`  | Named value sets       | Regions, categories                  |
+| `HASH`  | Hash of the key        | Even spread across pieces            |
+| `KEY`   | Internal hash, no expr | Even spread without writing the hash |
+
+```sql filename="range" copy
+CREATE TABLE t (
+  id INT NOT NULL,
+  created_at DATE NOT NULL,
+  title VARCHAR(150) NOT NULL,
+  PRIMARY KEY (id, created_at)
+)
+PARTITION BY RANGE (YEAR(created_at)) (
+  PARTITION p2024 VALUES LESS THAN (2025),
+  PARTITION p2025 VALUES LESS THAN (2026),
+  PARTITION pmax VALUES LESS THAN MAXVALUE
+);
+```
+
+```sql filename="list hash key" copy
+ALTER TABLE t PARTITION BY LIST (qty) (
+  PARTITION p_low VALUES IN (0, 1, 2),
+  PARTITION p_high VALUES IN (3, 4, 5)
+);
+
+ALTER TABLE t PARTITION BY HASH(id) PARTITIONS 4;
+
+ALTER TABLE t PARTITION BY KEY(id) PARTITIONS 4;
+```
+
+<Tabs items={['RANGE', 'HASH']}>
+  <Tabs.Tab>
+    Ordered bands. The optimizer prunes untouched pieces.
+
+    ```sql filename="range prune" copy
+    EXPLAIN PARTITIONS SELECT * FROM t WHERE created_at >= '2025-01-01';
+    ```
+
+    Use for time series and tiered data.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Even spread by hash. No pruning, no hot pieces.
+
+    ```sql filename="hash spread" copy
+    ALTER TABLE t PARTITION BY HASH(id) PARTITIONS 8;
+    ```
+
+    Use for uniform key distributions without range queries.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Subpartitioning
+
+Splits each partition once more. Two levels, same query surface.
+
+```sql filename="subpartition" copy
+ALTER TABLE t PARTITION BY RANGE (YEAR(created_at))
+SUBPARTITION BY HASH(id) SUBPARTITIONS 2 (
+  PARTITION p2024 VALUES LESS THAN (2025),
+  PARTITION p2025 VALUES LESS THAN (2026),
+  PARTITION pmax VALUES LESS THAN MAXVALUE
+);
+```
+
+<Callout type="warning">
+  The partition key must sit in every `UNIQUE` key, primary key included. MySQL
+  rejects the split otherwise.
+</Callout>
+
+<Callout type="info">
+  Pruning skips untouched partitions automatically. Confirm with `EXPLAIN
+  PARTITIONS`.
+</Callout>

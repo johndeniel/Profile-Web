@@ -1,0 +1,181 @@
+---
+title: Stored Procedures
+description: Every MySQL stored procedure element, with routine examples.
+sidebarTitle: Stored Procedures
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Stored Procedures
+
+A procedure stores multi-step logic in the database. Call it by name with `CALL`. Bare `SELECT`s return result sets. `OUT` parameters return values.
+
+<Steps>
+
+### Declare the signature
+
+Name the procedure. List `IN`, `OUT`, and `INOUT` parameters.
+
+### Write the logic
+
+Declare variables. Branch with `IF`. Repeat with loops. Read rows with cursors.
+
+### Call it
+
+Run `CALL` with arguments. Read back `OUT` values with `SELECT`.
+
+</Steps>
+
+<Callout type="info">
+  Client tools need a custom statement delimiter around routine bodies. Open
+  with `DELIMITER //`, close the body with `//`, restore with `DELIMITER ;`.
+</Callout>
+
+## Procedure Parameters
+
+Declares inputs and outputs. `IN` reads, `OUT` writes, `INOUT` does both.
+
+```sql filename="parameters" copy
+DELIMITER //
+
+CREATE PROCEDURE top_rows(IN min_amount DECIMAL(10,2), OUT total INT)
+BEGIN
+  SELECT COUNT(*) INTO total FROM t WHERE amount > min_amount;
+END //
+
+DELIMITER ;
+```
+
+## Local Variables
+
+Holds working values inside the body.
+
+```sql filename="variables" copy
+DELIMITER //
+
+CREATE PROCEDURE doubled(IN x INT, OUT y INT)
+BEGIN
+  DECLARE temp INT DEFAULT 0;
+  SET temp = x * 2;
+  SET y = temp;
+END //
+
+DELIMITER ;
+```
+
+## Conditional Statements
+
+Branches with `IF`.
+
+```sql filename="conditionals" copy
+IF qty > 0 THEN
+  SET status = 'yes';
+ELSE
+  SET status = 'no';
+END IF;
+```
+
+`IF` suits two branches. `CASE` suits lists:
+
+```sql filename="case statement" copy
+CASE qty
+  WHEN 0 THEN SET status = 'empty';
+  WHEN 1 THEN SET status = 'single';
+  ELSE SET status = 'many';
+END CASE;
+```
+
+## Loops
+
+Repeats a block. Three forms, one exit with `LEAVE`.
+
+<Tabs items={['LOOP', 'WHILE', 'REPEAT']}>
+  <Tabs.Tab>
+    Exits only through `LEAVE`. Condition checked inside.
+
+    ```sql filename="loop" copy
+    SET i = 0;
+    my_loop: LOOP
+      SET i = i + 1;
+      IF i >= 3 THEN
+        LEAVE my_loop;
+      END IF;
+    END LOOP;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Checks before each round. May run zero times.
+
+    ```sql filename="while" copy
+    SET i = 0;
+    WHILE i < 3 DO
+      SET i = i + 1;
+    END WHILE;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Checks after each round. Always runs at least once.
+
+    ```sql filename="repeat" copy
+    SET i = 0;
+    REPEAT
+      SET i = i + 1;
+    UNTIL i >= 3 END REPEAT;
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## Cursors
+
+Walks query rows one at a time inside a loop.
+
+```sql filename="cursors" copy
+DECLARE done INT DEFAULT FALSE;
+DECLARE cur_id INT;
+DECLARE cur CURSOR FOR SELECT id FROM t;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+OPEN cur;
+read_loop: LOOP
+  FETCH cur INTO cur_id;
+  IF done THEN
+    LEAVE read_loop;
+  END IF;
+END LOOP;
+CLOSE cur;
+```
+
+<Callout type="warning">
+  Cursors process row by row and run slow. Prefer set-based SQL wherever it
+  fits.
+</Callout>
+
+## Error Handling
+
+Catches conditions with handlers. Continues or exits on match.
+
+```sql filename="handlers" copy
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+  ROLLBACK;
+END;
+```
+
+## Procedure Management
+
+Runs, lists, and removes procedures.
+
+```sql filename="management" copy
+CALL top_rows(50.00, @total);
+
+SELECT @total;
+
+SHOW PROCEDURE STATUS WHERE Db = 'mydb';
+
+DROP PROCEDURE IF EXISTS top_rows;
+```

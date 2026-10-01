@@ -1,0 +1,106 @@
+---
+title: Table Relationships
+description: Every MySQL table relationship, with key examples.
+sidebarTitle: Table Relationships
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Table Relationships
+
+Table relationships link rows across tables. Cardinality decides where the key lives.
+
+<Steps>
+
+### Name the cardinality
+
+One-to-one, one-to-many, or many-to-many. Count both directions.
+
+### Place the key
+
+Put the foreign key on the many side. Build a junction table for many-to-many.
+
+### Constrain it
+
+Point each key at a real parent key. Index every child column.
+
+</Steps>
+
+## One-to-Many
+
+The common case. The foreign key sits on the many side, once per row.
+
+```sql filename="one to many" copy
+CREATE TABLE line (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ref_id INT NOT NULL,
+  CONSTRAINT fk_line_t FOREIGN KEY (ref_id)
+    REFERENCES t (id) ON DELETE CASCADE
+);
+```
+
+## One-to-One
+
+One row matches at most one row. A `UNIQUE` foreign key enforces it.
+
+```sql filename="one to one" copy
+CREATE TABLE profile (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ref_id INT NOT NULL UNIQUE,
+  CONSTRAINT fk_profile_t FOREIGN KEY (ref_id)
+    REFERENCES t (id) ON DELETE CASCADE
+);
+```
+
+<Tabs items={['One-to-One', 'One-to-Many']}>
+  <Tabs.Tab>
+    `UNIQUE` on the foreign key. Each parent links at most one child.
+
+    ```sql filename="unique fk" copy
+    ref_id INT NOT NULL UNIQUE,
+    CONSTRAINT fk_profile_t FOREIGN KEY (ref_id)
+      REFERENCES t (id) ON DELETE CASCADE
+    ```
+
+    Use for optional extensions of one row.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Plain foreign key. Each parent links any number of children.
+
+    ```sql filename="plain fk" copy
+    ref_id INT NOT NULL,
+    CONSTRAINT fk_line_t FOREIGN KEY (ref_id)
+      REFERENCES t (id) ON DELETE CASCADE
+    ```
+
+    Use for collections belonging to one parent.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Many-to-Many
+
+No direct key fits. A junction table holds one row per pairing.
+
+```sql filename="junction" copy
+CREATE TABLE t_u (
+  t_id INT NOT NULL,
+  u_id INT NOT NULL,
+  PRIMARY KEY (t_id, u_id),
+  CONSTRAINT fk_tu_t FOREIGN KEY (t_id)
+    REFERENCES t (id) ON DELETE CASCADE,
+  CONSTRAINT fk_tu_u FOREIGN KEY (u_id)
+    REFERENCES u (id) ON DELETE CASCADE
+);
+```
+
+<Callout type="info">
+  The junction primary key is the composite of both foreign keys. It forbids
+  duplicate pairings for free.
+</Callout>
+
+<Callout type="warning">
+  Foreign key columns on the child need indexes. Without them, parent deletes
+  lock up scanning for orphans.
+</Callout>

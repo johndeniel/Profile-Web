@@ -1,0 +1,107 @@
+---
+title: Information Schema
+description: Every MySQL information schema view, with metadata queries.
+sidebarTitle: Information Schema
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Information Schema
+
+`INFORMATION_SCHEMA` exposes database metadata as read-only views. Query it with plain `SELECT` and `WHERE`.
+
+<Steps>
+
+### Pick the view
+
+Tables, columns, constraints, indexes, statistics, and privileges each have one.
+
+### Filter by schema
+
+Restrict to one database with `TABLE_SCHEMA`. Restrict to one table with `TABLE_NAME`.
+
+### Read the answer
+
+Treat results as data. Feed them into reports or automation.
+
+</Steps>
+
+## Finding Tables and Columns
+
+Lists what exists and how each column is defined.
+
+```sql filename="databases" copy
+SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME
+FROM INFORMATION_SCHEMA.SCHEMATA;
+```
+
+```sql filename="tables columns" copy
+SELECT TABLE_NAME, ENGINE, TABLE_ROWS
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'mydb';
+
+SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'mydb' AND TABLE_NAME = 't';
+```
+
+## Finding Constraints and Indexes
+
+Shows keys, links, and lookup structures.
+
+```sql filename="constraints indexes" copy
+SELECT CONSTRAINT_NAME, CONSTRAINT_TYPE
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+WHERE TABLE_SCHEMA = 'mydb' AND TABLE_NAME = 't';
+
+SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE
+FROM INFORMATION_SCHEMA.STATISTICS
+WHERE TABLE_SCHEMA = 'mydb' AND TABLE_NAME = 't';
+```
+
+## Finding Statistics and Privileges
+
+Reads estimates and effective rights.
+
+```sql filename="stats privileges" copy
+SELECT TABLE_NAME, TABLE_ROWS, DATA_LENGTH
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'mydb';
+
+SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE
+FROM INFORMATION_SCHEMA.USER_PRIVILEGES
+WHERE GRANTEE LIKE '%reader%';
+```
+
+<Tabs items={['TABLE_ROWS', 'COUNT(*)']}>
+  <Tabs.Tab>
+    Fast estimate from stored statistics. Free on huge tables.
+
+    ```sql filename="estimate" copy
+    SELECT TABLE_NAME, TABLE_ROWS
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = 'mydb';
+    ```
+
+    Use for dashboards and capacity math.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Exact count from a real scan. Costs grow with table size.
+
+    ```sql filename="exact" copy
+    SELECT COUNT(*) FROM t;
+    ```
+
+    Use when the number must be right.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  `TABLE_ROWS` is approximate on InnoDB. Never reconcile money against it.
+</Callout>
+
+<Callout type="info">
+  `INFORMATION_SCHEMA` exposes read-only views. Query them, never write to them.
+</Callout>

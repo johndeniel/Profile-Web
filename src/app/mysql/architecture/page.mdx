@@ -1,0 +1,95 @@
+---
+title: Architecture
+description: Every MySQL architecture layer, with connection examples.
+sidebarTitle: Architecture
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Architecture
+
+MySQL splits work into layers: clients connect, the server parses and plans, engines store rows. Each layer scales on its own terms.
+
+<Steps>
+
+### Connect a client
+
+Open a connection over the client-server protocol. Authenticate once per session.
+
+### Parse and plan
+
+The server parses SQL, optimizes the plan, and hands row operations down.
+
+### Execute in the engine
+
+The storage engine reads and writes rows. Results return up the same path.
+
+</Steps>
+
+## Client and Server
+
+Clients speak the MySQL protocol over TCP or sockets. The server holds sessions, one per connection.
+
+```sql filename="connections" copy
+SHOW PROCESSLIST;
+
+SHOW STATUS LIKE 'Threads_connected';
+```
+
+## Server Architecture
+
+Three stages per query: parser, optimizer, executor.
+
+| Stage     | Job                                    |
+| --------- | -------------------------------------- |
+| Parser    | Checks syntax. Builds the query tree.  |
+| Optimizer | Picks join order and access paths.     |
+| Executor  | Runs the plan against storage engines. |
+
+## Storage Engine Architecture
+
+Engines plug in below the executor through one API. Tables choose engines individually.
+
+```sql filename="engines" copy
+SHOW ENGINES;
+
+SELECT TABLE_NAME, ENGINE
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'mydb';
+```
+
+<Callout type="info">
+  InnoDB is the default engine. Engine choice is per table, not per server.
+</Callout>
+
+## Connection and Thread Management
+
+Each connection needs execution time. Two models share it out.
+
+<Tabs items={['Thread per connection', 'Thread pool']}>
+  <Tabs.Tab>
+    One thread per connection. Simple to reason about.
+
+    ```sql filename="per connection" copy
+    SHOW STATUS LIKE 'Threads_running';
+    ```
+
+    Use as the default. Watch `max_connections` on busy hosts.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    A pool of threads shared across connections. Less contention at high concurrency.
+
+    ```sql filename="thread pool" copy
+    SHOW VARIABLES LIKE 'thread_pool_size';
+    ```
+
+    Use past thousands of concurrent sessions.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  Hitting `max_connections` rejects new logins outright. Size it before traffic
+  does.
+</Callout>

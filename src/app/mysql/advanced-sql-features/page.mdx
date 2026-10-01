@@ -1,0 +1,61 @@
+---
+title: Advanced SQL Features
+description: Every advanced MySQL SQL feature, mapped to its deep guide.
+sidebarTitle: Advanced SQL Features
+---
+
+import { Callout, Steps } from 'nextra/components';
+
+# Advanced SQL Features
+
+Advanced features combine earlier topics into heavier machinery. Each section names the feature, shows its shape, and points at the page that owns its depth.
+
+<Steps>
+
+### Combine the basics
+
+Join, filter, group, and order fluently before reaching further.
+
+### Add one advanced feature
+
+Pick the single feature the query needs. Measure before adding a second.
+
+### Prove the gain
+
+Confirm with `EXPLAIN ANALYZE`. Keep the feature only when numbers improve.
+
+</Steps>
+
+| Feature                     | Owner page                                                      | Use                                    |
+| --------------------------- | --------------------------------------------------------------- | -------------------------------------- |
+| Recursive Queries           | [Common Table Expressions](/mysql/common-table-expressions)     | Walk hierarchies with `WITH RECURSIVE` |
+| Window Functions            | [Window Functions](/mysql/window-functions)                     | Rank and compare without collapsing    |
+| Common Table Expressions    | [Common Table Expressions](/mysql/common-table-expressions)     | Name repeated queries with `WITH`      |
+| Generated Columns           | [Storage and Table Features](/mysql/storage-and-table-features) | Derive values at write or read time    |
+| Functional Indexes          | [Indexes](/mysql/indexes)                                       | Index expressions, not just columns    |
+| Full-Text Search            | [Full-Text Search](/mysql/full-text-search)                     | `MATCH ... AGAINST` over `FULLTEXT`    |
+| Spatial Queries             | [Spatial Data](/mysql/spatial-data)                             | Geometry types plus spatial indexes    |
+| JSON Queries                | [JSON](/mysql/json)                                             | Path extraction and document search    |
+| Advanced Query Optimization | [Query Optimization](/mysql/query-optimization)                 | Plans, access paths, join order        |
+
+## Combining Features
+
+Advanced queries stack features. One recursive walk, ranked per level:
+
+```sql filename="combined" copy
+WITH RECURSIVE chain AS (
+  SELECT id, parent_id, title, 1 AS depth FROM t WHERE id = 1
+  UNION ALL
+  SELECT t.id, t.parent_id, t.title, chain.depth + 1
+  FROM t
+  INNER JOIN chain ON t.parent_id = chain.id
+)
+SELECT title, depth, ROW_NUMBER() OVER (ORDER BY depth) AS rn FROM chain;
+```
+
+<Callout type="warning">
+  Advanced never means faster by default. Verify every combination with `EXPLAIN
+  ANALYZE`.
+</Callout>
+
+<Callout type="info">Everything on this page needs MySQL 8.0 or later.</Callout>

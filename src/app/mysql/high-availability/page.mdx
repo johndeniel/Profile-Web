@@ -1,0 +1,92 @@
+---
+title: High Availability
+description: Every MySQL high availability option, with failover examples.
+sidebarTitle: High Availability
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# High Availability
+
+High availability survives node loss without losing writes. Detect failure, promote a survivor, redirect traffic, rejoin the fallen.
+
+<Steps>
+
+### Detect the failure
+
+Watch health checks and error rates. Confirm the primary is truly down.
+
+### Promote a survivor
+
+Elect the most caught-up replica. Make it the new writer.
+
+### Redirect and rejoin
+
+Point traffic at the new writer. Heal the old node back as a replica.
+
+</Steps>
+
+## Failover
+
+Moves the writer role to a healthy node. Reads continue throughout. In-flight writes on the fallen node may need replay.
+
+```sql filename="failover check" copy
+SHOW REPLICA STATUS;
+
+SELECT @@read_only;
+```
+
+## Group Replication
+
+Coordinates several writers or one writer with automatic election. Majority rules.
+
+```sql filename="group status" copy
+SELECT * FROM performance_schema.replication_group_members;
+```
+
+## InnoDB Cluster and ReplicaSet
+
+Two managed topologies over Group Replication and classic replication.
+
+<Tabs items={['Cluster', 'ReplicaSet']}>
+  <Tabs.Tab>
+    Group Replication underneath. Automatic election, strict consistency.
+
+    ```js filename="cluster" copy
+    dba.createCluster('liveCluster');
+    ```
+
+    Use when writes must survive any single loss without manual steps.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Classic async replication underneath. Simpler, looser guarantees.
+
+    ```js filename="replicaset" copy
+    dba.createReplicaSet('liveSet');
+    ```
+
+    Use when read scale matters more than automatic writer election.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+  Router hides topology from apps. Clients connect to Router, never to nodes
+  directly.
+</Callout>
+
+## Automatic Recovery and Fault Tolerance
+
+Heals without humans. Failed nodes rejoin as replicas and catch up.
+
+```js filename="rejoin" copy
+dba.rebootClusterFromCompleteOutage();
+```
+
+Majority math decides elections: floor(n/2) + 1 votes wins.
+
+<Callout type="warning">
+  Even node counts gain nothing. A 4-node majority needs 3 votes, same as 3
+  nodes. Prefer odd counts.
+</Callout>

@@ -6,6 +6,7 @@ import type {
   EducationalAttainment,
   CurriculumVitae,
   LicenseCertificate,
+  Article,
 } from '@/types';
 
 export const mockPersonalInformation: PersonalInformation[] = [
@@ -449,5 +450,16 @@ export const mockLicenseCertificates: LicenseCertificate[] = [
     title: 'Prompt Engineering for ChatGPT',
     updatedAt: '2026-09-10T13:47:53.305087',
     uploaderId: '173e86b0-3ffa-429d-a23b-5b90007f2967',
+  },
+];
+
+export const mockArticles: Article[] = [
+  {
+    id: 'mysql-fundamentals',
+    slug: '/mysql/introduction',
+    title: 'MySQL',
+    description:
+      'Databases, tables, data types, and operators — using a product example.',
+    tag: 'Database',
   },
 ];

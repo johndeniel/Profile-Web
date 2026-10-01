@@ -1,0 +1,130 @@
+---
+title: Data Definition Language
+description: Every MySQL DDL command, with column examples.
+sidebarTitle: Data Definition Language
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Data Definition Language
+
+DDL defines and changes structures, not rows. Five commands cover it.
+
+<Steps>
+
+### Create the table
+
+Define columns once with `CREATE TABLE`. Pick each type before any row exists.
+
+### Change columns
+
+Add, modify, or remove columns with `ALTER TABLE`. The rows stay, the shape changes.
+
+### Remove or rename
+
+Empty with `TRUNCATE`, delete with `DROP`, rename with `RENAME`.
+
+</Steps>
+
+## CREATE
+
+Makes a table. Name every column with its type and rules.
+
+```sql filename="create" copy
+CREATE TABLE t (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  qty INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+Safe rerun form. Skips creation when the table already exists:
+
+```sql filename="create if missing" copy
+CREATE TABLE IF NOT EXISTS t (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL
+);
+```
+
+<Callout type="info">
+  `IF NOT EXISTS` and `IF EXISTS` guards make scripts safe to rerun.
+</Callout>
+
+## ALTER
+
+Changes columns. Rows stay, the shape changes.
+
+<Tabs items={['ADD', 'MODIFY', 'DROP COLUMN', 'RENAME COLUMN']}>
+  <Tabs.Tab>
+    Adds a column. Existing rows get the default.
+
+    ```sql filename="add column" copy
+    ALTER TABLE t ADD COLUMN note TEXT;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Changes a column type. Values convert where possible.
+
+    ```sql filename="modify column" copy
+    ALTER TABLE t MODIFY COLUMN title VARCHAR(200) NOT NULL;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Removes a column and all its values.
+
+    ```sql filename="drop column" copy
+    ALTER TABLE t DROP COLUMN note;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Renames a column. Type and rules stay.
+
+    ```sql filename="rename column" copy
+    ALTER TABLE t RENAME COLUMN note TO remark;
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## DROP
+
+Deletes a table and its definition. Data and columns go together.
+
+```sql filename="drop" copy
+DROP TABLE t;
+```
+
+Guarded form. Skips the error when the table is already gone:
+
+```sql filename="drop if exists" copy
+DROP TABLE IF EXISTS t;
+```
+
+## TRUNCATE
+
+Empties a table. Keeps its definition, removes all rows.
+
+```sql filename="truncate" copy
+TRUNCATE TABLE t;
+```
+
+`DROP` removes the definition. `TRUNCATE` keeps the definition and removes all rows.
+
+<Callout type="warning">
+  `DROP` and `TRUNCATE` cannot be undone. Confirm the table name before running
+  either.
+</Callout>
+
+## RENAME
+
+Renames a table. Columns, rows, and rules move with it.
+
+```sql filename="rename" copy
+RENAME TABLE t TO t_archive;
+```

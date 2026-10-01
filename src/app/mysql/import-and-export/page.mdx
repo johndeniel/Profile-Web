@@ -1,0 +1,90 @@
+---
+title: Import and Export
+description: Every MySQL import and export path, with move-data examples.
+sidebarTitle: Import and Export
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Import and Export
+
+Import and export move data across the database boundary. Dumps keep full fidelity. CSV files trade fidelity for portability.
+
+<Steps>
+
+### Dump the source
+
+Export with `mysqldump` for fidelity, or `SELECT ... INTO OUTFILE` for CSV.
+
+### Transfer the file
+
+Move it to the target host through a trusted channel.
+
+### Restore and verify
+
+Load it back. Compare row counts on both sides.
+
+</Steps>
+
+## CSV Import and Export
+
+Loads and unloads flat files row by row.
+
+```sql filename="csv" copy
+SELECT id, title, amount FROM t
+INTO OUTFILE '/tmp/t.csv'
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+LINES TERMINATED BY '\n';
+
+LOAD DATA INFILE '/tmp/t.csv'
+INTO TABLE t
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+LINES TERMINATED BY '\n';
+```
+
+<Callout type="warning">
+  `LOAD DATA LOCAL` needs flags on both sides: server `local_infile` plus the
+  client's local-data option. Without both, the load is refused.
+</Callout>
+
+<Callout type="info">
+  `secure_file_priv` restricts which directories MySQL reads and writes. Check
+  it before scripting paths.
+</Callout>
+
+## Data Dump, Backup, and Restore
+
+Copies whole databases with definitions intact. Restores through the plain client.
+
+<Tabs items={['mysqldump', 'CSV files']}>
+  <Tabs.Tab>
+    Full fidelity: schema, rows, routines, and triggers in one stream.
+
+    ```bash filename="dump and restore" copy
+    mysqldump -u root -p --routines --events mydb > mydb.sql
+    mysql -u root -p mydb < mydb.sql
+    ```
+
+    Use for backups, clones, and migrations.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Portable rows without definitions. Any tool reads them.
+
+    ```sql filename="csv move" copy
+    SELECT id, title, amount FROM t
+    INTO OUTFILE '/tmp/t.csv'
+    FIELDS TERMINATED BY ',';
+
+    LOAD DATA INFILE '/tmp/t.csv' INTO TABLE t
+    FIELDS TERMINATED BY ',';
+    ```
+
+    Use for spreadsheets and cross-system feeds. Recreate the schema separately.
+
+  </Tabs.Tab>
+</Tabs>
+
+```sql filename="verify" copy
+SELECT COUNT(*) FROM t;
+```

@@ -1,0 +1,111 @@
+---
+title: Common Table Expressions
+description: Every MySQL CTE form, with factored examples.
+sidebarTitle: Common Table Expressions
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Common Table Expressions
+
+A CTE names a query result for reuse in the statement that follows. The recursive form repeats until done.
+
+<Steps>
+
+### Write the repeated part
+
+Isolate the subquery you would otherwise paste twice.
+
+### Name it with WITH
+
+Place it after `WITH` with a name. Comma-separate multiple names.
+
+### Use it below
+
+Reference the name in the main query like a table.
+
+</Steps>
+
+<Callout type="info">
+  CTEs need MySQL 8.0 or later. Each one lives for a single statement only.
+</Callout>
+
+## CTE
+
+Factors one repeated query into a name.
+
+```sql filename="cte" copy
+WITH big AS (
+  SELECT id, title FROM t WHERE amount > 50
+)
+SELECT * FROM big ORDER BY title;
+```
+
+## Multiple CTEs
+
+Comma-separated names. Later ones can reference earlier ones.
+
+```sql filename="multiple ctes" copy
+WITH big AS (
+  SELECT id, title FROM t WHERE amount > 50
+),
+cheap AS (
+  SELECT id, title FROM t WHERE amount <= 50
+)
+SELECT * FROM big
+UNION ALL
+SELECT * FROM cheap;
+```
+
+## Recursive CTE
+
+Repeats a member query until no new rows appear. Anchor first, then the recursive reference.
+
+```sql filename="recursive" copy
+WITH RECURSIVE chain AS (
+  SELECT id, parent_id, title FROM t WHERE id = 1
+  UNION ALL
+  SELECT t.id, t.parent_id, t.title
+  FROM t
+  INNER JOIN chain ON t.parent_id = chain.id
+)
+SELECT * FROM chain;
+```
+
+<Tabs items={['UNION ALL', 'UNION']}>
+  <Tabs.Tab>
+    Keeps duplicates across rounds. The usual choice for walks.
+
+    ```sql filename="recursive union all" copy
+    WITH RECURSIVE chain AS (
+      SELECT id, parent_id FROM t WHERE id = 1
+      UNION ALL
+      SELECT t.id, t.parent_id
+      FROM t
+      INNER JOIN chain ON t.parent_id = chain.id
+    )
+    SELECT * FROM chain;
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Removes duplicate rows across rounds. Slower, stricter.
+
+    ```sql filename="recursive union" copy
+    WITH RECURSIVE chain AS (
+      SELECT id, parent_id FROM t WHERE id = 1
+      UNION
+      SELECT t.id, t.parent_id
+      FROM t
+      INNER JOIN chain ON t.parent_id = chain.id
+    )
+    SELECT * FROM chain;
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  A missing termination condition runs to `cte_max_recursion_depth` (default
+  1000) and errors. Bound the walk before running.
+</Callout>

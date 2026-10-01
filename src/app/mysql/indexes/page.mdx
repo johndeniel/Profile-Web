@@ -1,0 +1,124 @@
+---
+title: Indexes
+description: Every MySQL index type, with lookup examples.
+sidebarTitle: Indexes
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Indexes
+
+An index is a lookup structure over columns. It turns scans into jumps. Every index slows writes and costs disk.
+
+<Steps>
+
+### Find the slow lookup
+
+Locate the `WHERE` and `JOIN` columns in slow queries with `EXPLAIN`.
+
+### Index leftmost columns
+
+Build one index over the filtered columns, most selective first.
+
+### Verify with EXPLAIN
+
+Rerun `EXPLAIN`. The lookup must name the index instead of scanning.
+
+</Steps>
+
+## Single-column Indexes
+
+One index over one column each.
+
+```sql filename="single column" copy
+CREATE TABLE t (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  UNIQUE KEY uq_title (title),
+  KEY idx_amount (amount)
+);
+```
+
+`PRIMARY KEY` identifies rows. `UNIQUE` forbids duplicates. Plain `KEY` speeds lookups.
+
+`UNIQUE` still allows multiple `NULL`s. Nulls never compare equal.
+
+## Composite Indexes
+
+One index over several columns. Serves leftmost prefixes only.
+
+```sql filename="composite" copy
+CREATE INDEX idx_title_amount ON t (title, amount);
+```
+
+<Callout type="info">
+  Composite `(title, amount)` serves `title` alone and `title` plus `amount`. It
+  never serves `amount` alone.
+</Callout>
+
+## Functional Indexes
+
+Indexes an expression's result, so computed lookups stay indexed.
+
+```sql filename="functional index" copy
+CREATE INDEX idx_lower_title ON t ((LOWER(title)));
+
+SELECT * FROM t WHERE LOWER(title) = 'widget';
+```
+
+## Special Indexes
+
+Full-text and spatial lookups need their own index kinds.
+
+<Tabs items={['B-tree', 'FULLTEXT', 'SPATIAL']}>
+  <Tabs.Tab>
+    Default kind. Equality, ranges, ordering, and joins.
+
+    ```sql filename="btree" copy
+    CREATE INDEX idx_amount ON t (amount);
+    ```
+
+    Use unless the lookup is textual or spatial.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Word search inside text columns.
+
+    ```sql filename="fulltext" copy
+    CREATE FULLTEXT INDEX ft_note ON t (note);
+
+    SELECT * FROM t WHERE MATCH(note) AGAINST('refund');
+    ```
+
+    Use for natural-language search, not for exact matches.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Geometry lookups on spatial columns.
+
+    ```sql filename="spatial" copy
+    CREATE SPATIAL INDEX sp_point ON t (point);
+    ```
+
+    Use for location queries only.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Index Management
+
+Lists and removes indexes.
+
+```sql filename="management" copy
+SHOW INDEX FROM t;
+
+DROP INDEX idx_amount ON t;
+
+CREATE INDEX idx_amount ON t (amount);
+```
+
+<Callout type="warning">
+  Each index slows writes and costs disk. Index lookup and join columns. Nothing
+  else.
+</Callout>

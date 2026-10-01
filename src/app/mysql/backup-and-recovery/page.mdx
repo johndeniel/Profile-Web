@@ -1,0 +1,93 @@
+---
+title: Backup and Recovery
+description: Every MySQL backup and recovery path, with restore examples.
+sidebarTitle: Backup and Recovery
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Backup and Recovery
+
+Backups copy data out before disaster strikes. Recovery replays them back to the needed moment. An untested backup is a rumor.
+
+<Steps>
+
+### Take the full copy
+
+Dump the whole database on schedule. Keep several generations.
+
+### Keep the changes
+
+Retain binary logs past the dump. They replay the gap.
+
+### Restore to a point
+
+Reload the full copy. Replay logs to the target moment. Verify counts.
+
+</Steps>
+
+## Logical and Physical Backups
+
+Two copy styles. Statements versus files.
+
+<Tabs items={['Logical', 'Physical']}>
+  <Tabs.Tab>
+    SQL text via `mysqldump`. Portable across versions and hosts. Slow on huge data.
+
+    ```bash filename="logical backup" copy
+    mysqldump -u root -p mydb > mydb.sql
+    ```
+
+    Use for small databases, migrations, and version jumps.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Raw data files, copied with the server stopped or locked. Fast, version-bound.
+
+    ```bash filename="physical backup" copy
+    mysqladmin -u root -p shutdown
+    cp -r /var/lib/mysql/mydb /backup/mydb
+    ```
+
+    Use for huge data where dump time dominates.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Full and Incremental Backups
+
+Full copies stand alone. Incrementals stack on the last full.
+
+```bash filename="incremental" copy
+mysqldump -u root -p --single-transaction mydb > full.sql
+mysqlbinlog binlog.000042 > incremental.sql
+```
+
+## Point-in-Time Recovery
+
+Replays binary logs on top of a full restore, stopping at the target moment.
+
+```bash filename="pitr" copy
+mysql -u root -p mydb < full.sql
+mysqlbinlog --stop-datetime='2026-01-20 10:00:00' binlog.000042 | mysql -u root -p mydb
+```
+
+<Callout type="info">
+  Binary log expiry bounds recovery reach. Keep logs at least as long as the
+  oldest restore target.
+</Callout>
+
+## Disaster Recovery and Verification
+
+Plans the worst day in advance. Recovery time and recovery point objectives decide the schedule.
+
+```sql filename="verify" copy
+SELECT COUNT(*) FROM t;
+```
+
+Restore to staging on a cadence. Compare counts and checksums against live.
+
+<Callout type="warning">
+  Untested backups are not backups. Drill restores regularly or the plan exists
+  only on paper.
+</Callout>

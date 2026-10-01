@@ -1,0 +1,128 @@
+---
+title: Window Functions
+description: Every MySQL window function, with ranked examples.
+sidebarTitle: Window Functions
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Window Functions
+
+Window functions compute across rows related to the current row. Unlike `GROUP BY`, every row survives.
+
+<Steps>
+
+### Partition the set
+
+Split rows with `PARTITION BY`. Skip it to treat the table as one group.
+
+### Order each partition
+
+Sort inside `OVER` with `ORDER BY`. Rankings and neighbors follow this order.
+
+### Apply the function
+
+Number, compare neighbors, or read edges. The result keeps all rows.
+
+</Steps>
+
+<Callout type="info">
+  Window functions need MySQL 8.0 or later. They keep all rows. `GROUP BY`
+  collapses them.
+</Callout>
+
+## OVER and PARTITION BY
+
+Defines the window each calculation sees. Empty `OVER()` means the whole set.
+
+```sql filename="over" copy
+SELECT title, amount, SUM(amount) OVER () AS grand_total FROM t;
+
+SELECT title, amount, SUM(amount) OVER (PARTITION BY qty) AS group_total FROM t;
+```
+
+## Numbering rows
+
+Assigns positions. The three differ on ties.
+
+```sql filename="numbering" copy
+SELECT title, amount, ROW_NUMBER() OVER (ORDER BY amount DESC) AS rn FROM t;
+
+SELECT title, amount, RANK() OVER (ORDER BY amount DESC) AS rnk FROM t;
+
+SELECT title, amount, DENSE_RANK() OVER (ORDER BY amount DESC) AS dense FROM t;
+```
+
+`ROW_NUMBER` never ties. `RANK` leaves gaps on ties. `DENSE_RANK` leaves no gaps.
+
+<Tabs items={['ROW_NUMBER', 'RANK', 'DENSE_RANK']}>
+  <Tabs.Tab>
+    Numbers 1, 2, 3 with no gaps and no ties. Equal values still get different numbers.
+
+    ```sql filename="row number demo" copy
+    SELECT title, amount, ROW_NUMBER() OVER (ORDER BY amount DESC) AS rn FROM t;
+    ```
+
+    Use for strict positions and paging.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Equal values share a number. The next number skips past the tie.
+
+    ```sql filename="rank demo" copy
+    SELECT title, amount, RANK() OVER (ORDER BY amount DESC) AS rnk FROM t;
+    ```
+
+    Use for competition standings.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Equal values share a number. The next number continues without gaps.
+
+    ```sql filename="dense rank demo" copy
+    SELECT title, amount, DENSE_RANK() OVER (ORDER BY amount DESC) AS dense FROM t;
+    ```
+
+    Use for dense leaderboards.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Buckets
+
+Distributes rows into a fixed number of buckets.
+
+```sql filename="buckets" copy
+SELECT title, amount, NTILE(4) OVER (ORDER BY amount DESC) AS quartile FROM t;
+```
+
+## Neighbors
+
+Reads previous and next rows. Offset and default are optional.
+
+```sql filename="neighbors" copy
+SELECT title, amount, LAG(amount) OVER (ORDER BY amount DESC) AS prev_amount FROM t;
+
+SELECT title, amount, LEAD(amount) OVER (ORDER BY amount DESC) AS next_amount FROM t;
+
+SELECT title, amount, LAG(amount, 2, 0) OVER (ORDER BY amount DESC) AS prev_two FROM t;
+```
+
+`LAG` looks back. `LEAD` looks forward. The second argument steps further, the third fills the edge.
+
+## Edges
+
+Reads the first and last values of the frame.
+
+```sql filename="edges" copy
+SELECT title, amount, FIRST_VALUE(amount) OVER (ORDER BY amount DESC) AS top_amount FROM t;
+
+SELECT title, amount, LAST_VALUE(amount) OVER (
+  ORDER BY amount DESC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+) AS bottom_amount FROM t;
+```
+
+<Callout type="warning">
+  `LAST_VALUE` without an explicit frame returns the current row. The default
+  frame ends there. State the frame you mean.
+</Callout>

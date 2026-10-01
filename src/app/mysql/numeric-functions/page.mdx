@@ -1,0 +1,113 @@
+---
+title: Numeric Functions
+description: Every MySQL numeric function, with value examples.
+sidebarTitle: Numeric Functions
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Numeric Functions
+
+Numeric functions compute new numbers from old ones. Each takes a number and returns a number.
+
+<Steps>
+
+### Strip the sign
+
+Remove negativity with `ABS`. Decide direction with `CEIL` or `FLOOR`.
+
+### Round to precision
+
+Nearest with `ROUND`. Cut without rounding using `TRUNCATE`.
+
+### Scale or randomize
+
+Raise powers with `POWER`. Take roots with `SQRT`. Draw lots with `RAND`.
+
+</Steps>
+
+## Sign
+
+Drops the sign. Negative becomes positive, positive stays.
+
+```sql filename="sign" copy
+SELECT ABS(-8), ABS(8) FROM t;
+```
+
+## Rounding up and down
+
+Moves to the nearest integer in one fixed direction. `CEIL` and `CEILING` are synonyms.
+
+```sql filename="ceil floor" copy
+SELECT CEIL(4.2), CEILING(4.2), FLOOR(4.8) FROM t;
+```
+
+`CEIL` rounds up. `FLOOR` rounds down.
+
+## Rounding and cutting
+
+Limits decimal places. The two differ on remainders.
+
+```sql filename="round truncate" copy
+SELECT ROUND(4.567, 2), TRUNCATE(4.567, 2) FROM t;
+```
+
+`ROUND` goes nearest. `TRUNCATE` cuts without rounding.
+
+<Tabs items={['ROUND', 'TRUNCATE']}>
+  <Tabs.Tab>
+    Rounds to the nearest value at the given decimals.
+
+    ```sql filename="round demo" copy
+    SELECT ROUND(4.567, 2) FROM t;
+    ```
+
+    Returns 4.57. Use for display and money math.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Cuts digits off without rounding.
+
+    ```sql filename="truncate demo" copy
+    SELECT TRUNCATE(4.567, 2) FROM t;
+    ```
+
+    Returns 4.56. Use when rounding up would overstate.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+  `ROUND` breaks ties away from zero. `ROUND(2.5)` is 3, `ROUND(-2.5)` is −3.
+</Callout>
+
+<Callout type="warning">
+  `TRUNCATE()` shares its name with the `TRUNCATE TABLE` statement. One cuts
+  decimals, the other empties a table. Check context before running.
+</Callout>
+
+## Remainders and powers
+
+Splits division leftovers, raises powers, takes roots.
+
+```sql filename="remainders powers" copy
+SELECT MOD(7, 3) FROM t;
+
+SELECT POWER(2, 10) FROM t;
+
+SELECT SQRT(16) FROM t;
+```
+
+`MOD` returns the remainder. `POWER` raises to an exponent. `SQRT` takes the square root.
+
+## Random
+
+Draws a float from 0 to 1. Seedless calls differ every time.
+
+```sql filename="random" copy
+SELECT RAND() FROM t;
+
+SELECT RAND(7) FROM t;
+```
+
+`RAND()` differs per call. `RAND(seed)` repeats the same sequence. Use the seed for repeatable tests.

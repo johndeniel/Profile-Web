@@ -1,0 +1,129 @@
+---
+title: Operators
+description: Every MySQL operator family, with column examples.
+sidebarTitle: Operators
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Operators
+
+Operators compute values, compare them, and filter rows. One operator does one job. Combine them to say exactly what you mean.
+
+<Steps>
+
+### Pick the column
+
+Name the fact you test or compute. Amounts, quantities, titles.
+
+### Pick the operator
+
+Filtering uses comparison or pattern operators. Math uses arithmetic operators. Changing a value uses assignment.
+
+### Combine with logic
+
+Join conditions with `AND` and `OR`. One condition tests one fact.
+
+</Steps>
+
+## Arithmetic
+
+| Operator | Meaning         | Example                                |
+| -------- | --------------- | -------------------------------------- |
+| `+`      | Add             | `SELECT amount + 5 FROM t;`            |
+| `-`      | Subtract        | `SELECT amount - 5 FROM t;`            |
+| `*`      | Multiply        | `SELECT amount * qty AS total FROM t;` |
+| `/`      | Divide          | `SELECT amount / 2 FROM t;`            |
+| `%`      | Remainder       | `SELECT qty % 2 FROM t;`               |
+| `DIV`    | Integer divide  | `SELECT amount DIV 2 FROM t;`          |
+| `MOD`    | Remainder, word | `SELECT MOD(qty, 2) FROM t;`           |
+
+## Comparison
+
+| Operator | Meaning                      | Example                  |
+| -------- | ---------------------------- | ------------------------ |
+| `=`      | Equal                        | `WHERE title = 'Widget'` |
+| `<>`     | Not equal (`!=` is an alias) | `WHERE qty <> 0`         |
+| `>`      | Greater than                 | `WHERE amount > 50`      |
+| `<`      | Less than                    | `WHERE amount < 50`      |
+| `>=`     | Greater than or equal        | `WHERE qty >= 10`        |
+| `<=`     | Less than or equal           | `WHERE qty <= 5`         |
+
+## Logical
+
+| Operator | Meaning              | Example                         |
+| -------- | -------------------- | ------------------------------- |
+| `AND`    | All conditions true  | `WHERE amount < 50 AND qty > 0` |
+| `OR`     | Any condition true   | `WHERE qty = 0 OR amount > 100` |
+| `NOT`    | Reverses a condition | `WHERE NOT (qty = 0)`           |
+
+## Bitwise
+
+| Operator | Meaning     | Example                     |
+| -------- | ----------- | --------------------------- |
+| `&`      | AND bits    | `WHERE flags & 1 = 1`       |
+| `\|`     | OR bits     | `SELECT flags \| 2 FROM t;` |
+| `^`      | XOR bits    | `SELECT flags ^ 1 FROM t;`  |
+| `~`      | Invert bits | `SELECT ~flags FROM t;`     |
+| `<<`     | Shift left  | `SELECT flags << 1 FROM t;` |
+| `>>`     | Shift right | `SELECT flags >> 1 FROM t;` |
+
+Use only on flag columns. Never on amounts or quantities.
+
+## Assignment
+
+| Operator | Meaning            | Example                                     |
+| -------- | ------------------ | ------------------------------------------- |
+| `=`      | Assign in `SET`    | `UPDATE t SET amount = 35.00 WHERE id = 2;` |
+| `:=`     | Assign in `SELECT` | `SELECT @a := amount FROM t WHERE id = 2;`  |
+
+<Callout type="warning">
+  `=` compares in `WHERE` but assigns in `SET`. `UPDATE t SET amount = 35.00;`
+  without `WHERE` rewrites every amount. Preview with `SELECT` first.
+</Callout>
+
+## List and pattern
+
+| Operator              | Meaning                         | Example                          |
+| --------------------- | ------------------------------- | -------------------------------- |
+| `IN (...)`            | Matches any listed value        | `WHERE id IN (1, 2)`             |
+| `BETWEEN ... AND ...` | Within range, inclusive         | `WHERE amount BETWEEN 20 AND 50` |
+| `LIKE`                | Pattern match (`%` = any chars) | `WHERE title LIKE '%get%'`       |
+| `IS NULL`             | Has no value                    | `WHERE note IS NULL`             |
+| `IS NOT NULL`         | Has a value                     | `WHERE note IS NOT NULL`         |
+
+## LIKE vs REGEXP
+
+<Tabs items={['LIKE', 'REGEXP']}>
+  <Tabs.Tab>
+    `LIKE` matches simple patterns. `%` means any chars. `_` means one char.
+
+    ```sql filename="like" copy
+    SELECT * FROM t WHERE title LIKE '%get%';
+    SELECT * FROM t WHERE title LIKE 'Wid\_%';
+    ```
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    `REGEXP` matches full patterns. Use it when `LIKE` cannot say it.
+
+    ```sql filename="regexp" copy
+    SELECT * FROM t WHERE title REGEXP '^Wid';
+    SELECT * FROM t WHERE title NOT REGEXP '[0-9]';
+    ```
+
+  </Tabs.Tab>
+</Tabs>
+
+## EXISTS, ANY, ALL
+
+| Operator | Meaning                     | Example                                                     |
+| -------- | --------------------------- | ----------------------------------------------------------- |
+| `EXISTS` | At least one row matches    | `WHERE EXISTS (SELECT 1 FROM line l WHERE l.ref_id = t.id)` |
+| `ANY`    | True for at least one value | `WHERE amount > ANY (SELECT amount FROM t)`                 |
+| `ALL`    | True for every value        | `WHERE amount > ALL (SELECT amount FROM t WHERE qty = 0)`   |
+
+<Callout type="info">
+  `EXISTS` stops at the first match. Prefer it over `IN` when `line` grows
+  large.
+</Callout>

@@ -1,0 +1,93 @@
+---
+title: Conditional Functions
+description: Every MySQL conditional function, with value examples.
+sidebarTitle: Conditional Functions
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Conditional Functions
+
+Conditional functions pick return values by condition. Each tests something and returns one of its branches.
+
+<Steps>
+
+### Test one condition
+
+Branch two ways with `IF`. True takes the first value, false takes the second.
+
+### Cover NULL
+
+Default nulls with `IFNULL` or `COALESCE`. Map matches to null with `NULLIF`.
+
+### List many branches
+
+Stack `WHEN` and `THEN` inside `CASE`. Close with `ELSE` and `END`.
+
+</Steps>
+
+## IF
+
+Chooses between two values on one condition.
+
+```sql filename="if" copy
+SELECT IF(qty > 0, 'yes', 'no') FROM t;
+```
+
+## Null handling
+
+Fills or creates nulls. Three functions, three jobs.
+
+```sql filename="null handling" copy
+SELECT IFNULL(note, 'none') FROM t;
+
+SELECT NULLIF(qty, 0) FROM t;
+
+SELECT COALESCE(note, title, 'none') FROM t;
+```
+
+`IFNULL` defaults one nullable to a fallback. `NULLIF` returns `NULL` when its two arguments match. `COALESCE` returns the first non-`NULL` of any number of arguments.
+
+<Callout type="info">
+  `COALESCE` takes any number of arguments. `IFNULL` takes exactly two.
+</Callout>
+
+## CASE
+
+Branches many ways. `WHEN` tests, `THEN` returns, `ELSE` catches the rest, `END` closes.
+
+<Tabs items={['Simple CASE', 'Searched CASE']}>
+  <Tabs.Tab>
+    Tests one value against a list of matches.
+
+    ```sql filename="simple case" copy
+    SELECT CASE qty
+      WHEN 0 THEN 'empty'
+      WHEN 1 THEN 'single'
+      ELSE 'many'
+    END FROM t;
+    ```
+
+    Use when every branch tests the same value.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Tests a different condition per branch.
+
+    ```sql filename="searched case" copy
+    SELECT CASE
+      WHEN qty > 10 THEN 'many'
+      WHEN qty > 0 THEN 'few'
+      ELSE 'empty'
+    END FROM t;
+    ```
+
+    Use when branches test different conditions.
+
+  </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+  A `CASE` without `ELSE` returns `NULL` on no match. Add `ELSE` unless nulls
+  are intended.
+</Callout>

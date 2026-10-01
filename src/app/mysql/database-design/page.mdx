@@ -1,0 +1,114 @@
+---
+title: Database Design
+description: Every MySQL database design rule, with schema examples.
+sidebarTitle: Database Design
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components';
+
+# Database Design
+
+Database design shapes tables so facts live in exactly one place. Normalize by default. Denormalize measured pain.
+
+<Steps>
+
+### Atomize columns
+
+Give each column one fact. No lists, no combined values.
+
+### Choose the key
+
+Pick one primary key per table. Remove partial and transitive dependencies.
+
+### Break rules on measurement
+
+Denormalize only slow queries you have timed. Document each exception.
+
+</Steps>
+
+## Normalization
+
+Removes redundancy in stages. Each form builds on the last.
+
+| Form   | Rule                                                                    |
+| ------ | ----------------------------------------------------------------------- |
+| `1NF`  | Atomic values. One fact per column, no repeating groups.                |
+| `2NF`  | No partial dependency. Every column depends on the whole key.           |
+| `3NF`  | No transitive dependency. Columns depend on the key, not on each other. |
+| `BCNF` | Every determinant is a key. Stricter than `3NF`.                        |
+
+```sql filename="normalized" copy
+CREATE TABLE t (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE line (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ref_id INT NOT NULL,
+  qty INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_line_t FOREIGN KEY (ref_id)
+    REFERENCES t (id) ON DELETE CASCADE
+);
+```
+
+Facts split by key. Nothing repeats. Nothing dangles.
+
+<Callout type="info">
+  Default to third normal form. Reserve BCNF for write-heavy tables where
+  integrity outranks convenience.
+</Callout>
+
+## Keys
+
+Identifies rows and candidates for the job.
+
+| Key         | Meaning                                       |
+| ----------- | --------------------------------------------- |
+| `Primary`   | The chosen identifier. One per table.         |
+| `Candidate` | Any column set that could identify rows.      |
+| `Natural`   | A real-world identifier, like a code.         |
+| `Surrogate` | A system identifier with no business meaning. |
+
+<Tabs items={['Natural', 'Surrogate']}>
+  <Tabs.Tab>
+    Real-world codes as keys. Readable in raw rows.
+
+    ```sql filename="natural key" copy
+    CREATE TABLE t (
+      code CHAR(2) PRIMARY KEY,
+      title VARCHAR(150) NOT NULL
+    );
+    ```
+
+    Use when codes are short, stable, and truly unique.
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+    Auto-numbered ids with no business meaning. Immune to real-world change.
+
+    ```sql filename="surrogate key" copy
+    CREATE TABLE t (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      code CHAR(2) NOT NULL UNIQUE,
+      title VARCHAR(150) NOT NULL
+    );
+    ```
+
+    Use by default. Codes change; numbers don't.
+
+  </Tabs.Tab>
+</Tabs>
+
+## Denormalization
+
+Reintroduces redundancy for speed. Each copy risks drift.
+
+```sql filename="denormalized" copy
+ALTER TABLE line ADD COLUMN title VARCHAR(150) NOT NULL;
+```
+
+<Callout type="warning">
+  Over-normalization costs joins. Denormalize only queries you have timed, and
+  keep the copies in sync.
+</Callout>

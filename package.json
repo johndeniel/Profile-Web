@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next --turbopack",
     "build": "next build",
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -60,6 +61,7 @@
     "eslint-config-next": "^16.3.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.0",
+    "pagefind": "^1.5.2",
     "postcss": "^8.5.28",
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
