@@ -4,11 +4,13 @@
 
 All environment variables are loaded from the `.env` file in the project root.
 
-| Variable                      | Description                  | Example                           |
-| ----------------------------- | ---------------------------- | --------------------------------- |
-| `NEXT_PUBLIC_GITHUB_USERNAME` | GitHub username for repos    | `johndeniel`                      |
-| `NEXT_PUBLIC_GITHUB_TOKEN`    | GitHub personal access token | `ghp_xxxxx`                       |
-| `NEXT_PUBLIC_API_BASEURL`     | Backend API base URL         | `https://profile-api.example.com` |
+| Variable                      | Description                                                                         | Example                           |
+| ----------------------------- | ----------------------------------------------------------------------------------- | --------------------------------- |
+| `NEXT_PUBLIC_GITHUB_USERNAME` | GitHub username for repos                                                           | `johndeniel`                      |
+| `NEXT_PUBLIC_GITHUB_TOKEN`    | GitHub personal access token                                                        | `ghp_xxxxx`                       |
+| `NEXT_PUBLIC_API_BASEURL`     | Backend API base URL                                                                | `https://profile-api.example.com` |
+| `GROQ_API_KEY`                | Server-only key for the AI quiz ([console.groq.com](https://console.groq.com/keys)) | `gsk_xxxxx`                       |
+| `GROQ_MODEL`                  | Optional Groq model override                                                        | `openai/gpt-oss-120b`             |
 
 ### Build and Run
 
