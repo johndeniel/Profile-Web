@@ -100,3 +100,17 @@ export interface Article {
   description: string;
   tag: string;
 }
+
+export interface QuizQuestion {
+  question: string;
+  topic: string;
+}
+
+export type QuizVerdict = 'correct' | 'partial' | 'incorrect';
+
+export interface QuizResult {
+  correct: boolean;
+  verdict: QuizVerdict;
+  feedback: string;
+  betterAnswer: string;
+}
