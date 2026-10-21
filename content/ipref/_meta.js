@@ -1,9 +1,9 @@
 const meta = {
   index: 'Overview',
-  about: 'About iPref',
   'privacy-policy': 'Privacy Policy',
   'terms-of-service': 'Terms of Service',
-  'account-deletion': 'Account Deletion',
+  'account-deletion': 'How to Delete Your Account',
+  about: 'About',
 };
 
 export default meta;
