@@ -8,6 +8,7 @@ import { ProfessionalExperienceList } from '@/components/professional-experience
 import { EducationalAttainmentList } from '@/components/educational-attainment';
 import { GitHubProjects } from '@/components/github-projects';
 import { GitHubProjectsSkeleton } from '@/components/github-projects-skeleton';
+import { IPrefSection } from '@/components/ipref-section';
 import { ArticlesList } from '@/components/articles';
 import { CurriculumVitaeList } from '@/components/curriculum-vitae';
 import { LicenseCertificateList } from '@/components/license-certificate';
@@ -67,6 +68,7 @@ export default function HomePage() {
           )}
           {loading && <GitHubProjectsSkeleton />}
           {!loading && !error && <GitHubProjects repos={repos} />}
+          <IPrefSection />
           <ArticlesList articles={mockArticles} />
           <CurriculumVitaeList cvs={mockCurriculumVitae} />
           <LicenseCertificateList certificates={mockLicenseCertificates} />

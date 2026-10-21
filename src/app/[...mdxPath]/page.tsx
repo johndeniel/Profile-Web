@@ -52,7 +52,7 @@ export default async function Page({ params }: GatewayPageProps) {
       <Wrapper toc={toc} metadata={metadata}>
         <MDXContent />
       </Wrapper>
-      <QuizDialog slug={mdxPath} />
+      {mdxPath[0] === 'mysql' && <QuizDialog slug={mdxPath} />}
     </>
   );
 }
