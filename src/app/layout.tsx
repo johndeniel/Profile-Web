@@ -1,4 +1,5 @@
-import { Layout, Navbar } from 'nextra-theme-docs';
+import { Navbar } from 'nextra-theme-docs';
+import { SiteLayout } from '@/components/site-layout';
 import { NavbarActions } from '@/components/navbar-actions';
 import { Head } from 'nextra/components';
 import { getPageMap } from 'nextra/page-map';
@@ -44,14 +45,14 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     >
       <Head />
       <body className="font-sans">
-        <Layout
+        <SiteLayout
           navbar={navbar}
           pageMap={pageMap}
           darkMode
           navigation={{ prev: true, next: true }}
         >
           {children}
-        </Layout>
+        </SiteLayout>
       </body>
     </html>
   );
