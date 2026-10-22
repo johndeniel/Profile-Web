@@ -68,7 +68,6 @@ export default function HomePage() {
           )}
           {loading && <GitHubProjectsSkeleton />}
           {!loading && !error && <GitHubProjects repos={repos} />}
-          <IPrefSection />
           <ArticlesList articles={mockArticles} />
           <AppsList />
           <CurriculumVitaeList cvs={mockCurriculumVitae} />
