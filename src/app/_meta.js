@@ -6,10 +6,7 @@ const meta = {
   },
   ipref: {
     title: 'iPref',
-    theme: {
-      collapsed: false,
-      timestamp: false,
-    },
+    display: 'children',
   },
   mysql: {
     title: 'MySQL',
